@@ -337,7 +337,10 @@ protected:
 
 class PyLocalDocument: public cy::LocalDocument {
 public:
-	using cy::LocalDocument::LocalDocument;
+	PyLocalDocument(): cy::LocalDocument() {}
+	PyLocalDocument(const cy::Document& d, const cy::String& path, cy::DocumentFormat f = cy::formatCyberiada10):
+		cy::LocalDocument(d, path, f) {}
+	PyLocalDocument(const cy::LocalDocument& ld): cy::LocalDocument(ld) {}
 
 	cy::Element* copy(cy::Element* parent) const override {
 		PYBIND11_OVERRIDE(cy::Element*, cy::LocalDocument, copy, parent);
@@ -834,6 +837,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def(py::init<>())
 		.def(py::init<const cy::Document&, const cy::String&>())
 		.def(py::init<const cy::Document&, const cy::String&, cy::DocumentFormat>())
+        .def(py::init<const cy::LocalDocument&>())
 		.def("copy", &cy::LocalDocument::copy, py::return_value_policy::copy)
 		.def("get_file_format", &cy::LocalDocument::get_file_format)
 		.def("get_file_format_str", &cy::LocalDocument::get_file_format_str)
