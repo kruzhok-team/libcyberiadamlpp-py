@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 #  The Python binding for Cyberiada GraphML library
 # 
-#  The document metainformation test
+#  The document name test
 # 
 #  Copyright (C) 2025 Alexey Fedoseev <aleksey@fedoseev.net>
 # 
@@ -28,21 +28,10 @@ ld = CyberiadaML.LocalDocument();
 try:
     ld.open(sys.argv[0] + "-input.graphml", CyberiadaML.formatCyberiada10,
             CyberiadaML.geometryFormatQt, False);
-    d = CyberiadaML.Document(ld)
-    assert d.get_state_machines()[0].get_name() == "SM"
-    assert d.get_meta().platform_name == "Berloga"
-    assert d.get_meta().platform_version == "1.4"
-    assert d.get_meta().platform_language == "script"
-    assert d.get_meta().target_system == "Unit"
-    assert d.get_meta().name == "Test document"
-    assert d.get_meta().author == "Author"
-    assert d.get_meta().contact == "platform@kruzhok.org"
-    assert d.get_meta().description == "1\n2\n3"
-    assert d.get_meta().version == "0.1"
-    assert d.get_meta().date == "2024-04-14T11:22:00"
-    assert d.get_meta().markup_language == "html"
-    assert d.get_meta().transition_order_flag  # exit first
-    assert d.get_meta().event_propagation_flag # propagate
+    d = CyberiadaML.Document(ld);
+    assert d.get_meta().name == "Test document";
+    d.set_name("Test document 2");
+    assert d.get_meta().name == "Test document 2";
     print(d)
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
