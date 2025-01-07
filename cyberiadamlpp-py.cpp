@@ -22,6 +22,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
 /* Replace the macro names for older versions of pybind11 */
@@ -39,22 +40,22 @@
 namespace py = pybind11;
 namespace cy = Cyberiada;
 
-PYBIND11_MAKE_OPAQUE(std::list<cy::Point>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::CommentSubject>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::Element*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::Element*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Point>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::CommentSubject>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::Element*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Element*>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::ElementType>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::Vertex*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::Vertex*>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::State*>);;
-PYBIND11_MAKE_OPAQUE(std::list<cy::State*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::Action>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::Comment*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::Comment*>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::Transition*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::Transition*>);
-PYBIND11_MAKE_OPAQUE(std::list<const cy::StateMachine*>);
-PYBIND11_MAKE_OPAQUE(std::list<cy::StateMachine*>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::Vertex*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Vertex*>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::State*>);;
+PYBIND11_MAKE_OPAQUE(std::vector<cy::State*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Action>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::Comment*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Comment*>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::Transition*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::Transition*>);
+PYBIND11_MAKE_OPAQUE(std::vector<const cy::StateMachine*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::StateMachine*>);
 
 class PyElement: public cy::Element {
 public:
@@ -316,8 +317,9 @@ protected:
 
 class PyDocument: public cy::Document {
 public:
-	using cy::Document::Document;
-
+	PyDocument(cy::DocumentGeometryFormat format = cy::geometryFormatNone): cy::Document(format) {}
+	PyDocument(const cy::Document& d): cy::Document(d) {} 
+	
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE(cy::Rect, cy::Document, get_bound_rect, d);
 	}
@@ -400,8 +402,28 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Polyline>(m, "Polyline")
 		.def(py::init<>())
+		.def("append", [](cy::Polyline& pl, const cy::Point& p){
+						   pl.push_back(p);
+					   })
+		.def("__getitem__", [](const cy::Polyline &pl, size_t i) {
+								if (i >= pl.size()) {
+									throw py::index_error();
+								}
+								return pl[i];
+							})
+		.def("__setitem__", [](cy::Polyline &pl, size_t i, const cy::Point& p) {
+								if (i >= pl.size()) {
+									throw py::index_error();
+								}
+								pl[i] = p;
+							})
+		.def("__iter__", [](const cy::Polyline &pl) {
+							 return py::make_iterator(pl.begin(), pl.end());
+						 },
+			 py::keep_alive<0, 1>())
+		.def("__len__", &cy::Polyline::size)		
 		.def("__repr__", &cy::Polyline::to_str);
-	
+
 	py::class_<cy::Element, PyElement>(m, "Element")
 		.def("clean_geometry", &cy::Element::clean_geometry)
 		.def("copy", &cy::Element::copy, py::return_value_policy::copy)
@@ -592,9 +614,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::return_value_policy::reference)
 		.def("get_geometry_rect", &cy::ElementCollection::get_geometry_rect, py::return_value_policy::reference)
 		.def("get_vertexes",
-			 static_cast<std::list<const cy::Vertex*> (cy::ElementCollection::*)() const>(&cy::ElementCollection::get_vertexes))
+			 static_cast<std::vector<const cy::Vertex*> (cy::ElementCollection::*)() const>(&cy::ElementCollection::get_vertexes))
 		.def("get_vertexes",
-			 static_cast<std::list<cy::Vertex*> (cy::ElementCollection::*)()>(&cy::ElementCollection::get_vertexes))
+			 static_cast<std::vector<cy::Vertex*> (cy::ElementCollection::*)()>(&cy::ElementCollection::get_vertexes))
 		.def("get_qualified_name", &cy::ElementCollection::qualified_name)
 		.def("has_children", &cy::ElementCollection::has_children)
 		.def("has_color", &cy::ElementCollection::has_color)
@@ -610,10 +632,10 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("add_action", &cy::State::add_action)
 		.def("add_element", &cy::State::add_element)
 		.def("copy", &cy::State::copy, py::return_value_policy::copy)
-		.def("get_actions", static_cast<const std::list<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
-		.def("get_actions", static_cast<std::list<cy::Action>& (cy::State::*)()>(&cy::State::get_actions))
-		.def("get_substates", static_cast<std::list<const cy::State*> (cy::State::*)() const>(&cy::State::get_substates))
-		.def("get_substates", static_cast<std::list<cy::State*> (cy::State::*)()>(&cy::State::get_substates))
+		.def("get_actions", static_cast<const std::vector<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
+		.def("get_actions", static_cast<std::vector<cy::Action>& (cy::State::*)()>(&cy::State::get_actions))
+		.def("get_substates", static_cast<std::vector<const cy::State*> (cy::State::*)() const>(&cy::State::get_substates))
+		.def("get_substates", static_cast<std::vector<cy::State*> (cy::State::*)()>(&cy::State::get_substates))
 		.def("has_actions", &cy::State::has_actions)
 		.def("is_composite_state", &cy::State::is_composite_state)
 		.def("is_simple_state", &cy::State::is_simple_state)
@@ -651,10 +673,10 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def(py::init<cy::Element*, const cy::ID&>())
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&>())
 		.def("copy", &cy::StateMachine::copy, py::return_value_policy::copy)
-		.def("get_comments", static_cast<std::list<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
-		.def("get_comments", static_cast<std::list<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
-		.def("get_transitions", static_cast<std::list<const cy::Transition*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_transitions))
-		.def("get_transitions", static_cast<std::list<cy::Transition*> (cy::StateMachine::*)()>(&cy::StateMachine::get_transitions));
+		.def("get_comments", static_cast<std::vector<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
+		.def("get_comments", static_cast<std::vector<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
+		.def("get_transitions", static_cast<std::vector<const cy::Transition*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_transitions))
+		.def("get_transitions", static_cast<std::vector<cy::Transition*> (cy::StateMachine::*)()>(&cy::StateMachine::get_transitions));
 
 	py::class_<cy::DocumentMetainformation>(m, "DocumentMetainformation")
 		.def(py::init<>())
@@ -676,6 +698,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::class_<cy::Document, cy::ElementCollection, PyDocument>(m, "Document")
         .def(py::init<cy::DocumentGeometryFormat>(), "Default constructor",
 			 py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone)
+        .def(py::init<const cy::Document&>())
 		.def("add_comment_to_element", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::ID&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element),
@@ -716,8 +739,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::return_value_policy::reference)
 		.def("get_parent_sm", static_cast<cy::StateMachine* (cy::Document::*)(const cy::Element*)>(&cy::Document::get_parent_sm),
 			 py::return_value_policy::reference)
-		.def("get_state_machines", static_cast<std::list<const cy::StateMachine*> (cy::Document::*)() const>(&cy::Document::get_state_machines))
-		.def("get_state_machines", static_cast<std::list<cy::StateMachine*> (cy::Document::*)()>(&cy::Document::get_state_machines))
+		.def("get_state_machines", static_cast<std::vector<const cy::StateMachine*> (cy::Document::*)() const>(&cy::Document::get_state_machines))
+		.def("get_state_machines", static_cast<std::vector<cy::StateMachine*> (cy::Document::*)()>(&cy::Document::get_state_machines))
 		.def("has_geometry", &cy::Document::has_geometry)
 		.def("new_choice", static_cast<cy::ChoicePseudostate*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_choice),
@@ -832,6 +855,22 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::class_<cy::NotFoundException, cy::ParametersException>(m, "NotFoundException");
 	py::class_<cy::AssertException, cy::Exception>(m, "AssertException");
 	py::class_<cy::NotImplementedException, cy::Exception>(m, "NotImplementedException");*/
+
+	py::bind_vector<std::vector<cy::CommentSubject>>(m, "ContentSubjectList");
+	py::bind_vector<std::vector<const cy::Element*>>(m, "ConstElementRefList");
+	py::bind_vector<std::vector<cy::Element*>>(m, "ElementRefList");
+	py::bind_vector<std::vector<cy::ElementType>>(m, "ElementTypeList");
+	py::bind_vector<std::vector<const cy::Vertex*>>(m, "ConstVertexRefList");
+	py::bind_vector<std::vector<cy::Vertex*>>(m, "VertexRefList");
+	py::bind_vector<std::vector<const cy::State*>>(m, "ConstStateRefList");
+	py::bind_vector<std::vector<cy::State*>>(m, "StateRefList");
+	py::bind_vector<std::vector<cy::Action>>(m, "ActionList");
+	py::bind_vector<std::vector<const cy::Comment*>>(m, "ConstCommentRefList");
+	py::bind_vector<std::vector<cy::Comment*>>(m, "CommentRefList");
+	py::bind_vector<std::vector<const cy::Transition*>>(m, "ConstTransitionRefList");
+	py::bind_vector<std::vector<cy::Transition*>>(m, "TransitionRefList");
+	py::bind_vector<std::vector<const cy::StateMachine*>>(m, "ConstStateMachinesRefList");
+	py::bind_vector<std::vector<cy::StateMachine*>>(m, "StateMachinesRefList");
 	
 	py::register_exception<cy::Exception>(m, "Exception");
 	py::register_exception<cy::FormatException>(m, "FormatException");
