@@ -29,13 +29,18 @@ try:
     print(d)
     print('name: ', d.get_name())
     print('type: ', d.get_type())
-    sm = d.new_state_machine('SM', CyberiadaML.Rect())
+    sm = d.new_state_machine('SM')
     print('new state machine: ', sm)
     print('sm name: ', sm.get_name())
     print('sm type: ', sm.get_type())
     print(d)
+except CyberiadaML.Exception as e:
+    sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
+    sys.stderr.write('{}\n'.format(traceback.format_exc()))
+    exit(1)
 except Exception as e:
-    print('Unexpected exception: {}'.format(e))
+    sys.stderr.write('Unexpected exception: {}\n'.format(e.__class__))
+    sys.stderr.write('{}\n'.format(traceback.format_exc()))
     exit(1)
 
 exit(0)

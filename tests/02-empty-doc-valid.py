@@ -25,10 +25,15 @@ import CyberiadaML
 
 try:
     ld = CyberiadaML.LocalDocument()
-    ld.new_state_machine("SM", CyberiadaML.Rect())
-    ld.save_as(sys.argv[0] + ".graphml", CyberiadaML.formatCyberiada10, False)
+    ld.new_state_machine("SM")
+    ld.save_as(sys.argv[0] + ".graphml")
+except CyberiadaML.Exception as e:
+    sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
+    sys.stderr.write('{}\n'.format(traceback.format_exc()))
+    exit(1)
 except Exception as e:
-    print('Unexpected exception: {}'.format(e.__class__))
+    sys.stderr.write('Unexpected exception: {}\n'.format(e.__class__))
+    sys.stderr.write('{}\n'.format(traceback.format_exc()))
     exit(1)
 
 exit(0)
