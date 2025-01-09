@@ -29,7 +29,7 @@ try:
     d.new_state_machine("SM1", CyberiadaML.Rect())
     try:
         # check id uniqueness
-        d.new_state_machine("G0", "SM2", CyberiadaML.Rect())
+        d.new_state_machine("G0", "SM2")
     except CyberiadaML.ParametersException:
         pass
     d.new_state_machine("SM2", CyberiadaML.Rect(1, 2, 300, 40))
