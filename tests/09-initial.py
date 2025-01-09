@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 #  The Python binding for Cyberiada GraphML library
 # 
-#  The state hierarchy test
+#  An initial pseudostate test
 # 
 #  Copyright (C) 2025 Alexey Fedoseev <aleksey@fedoseev.net>
 # 
