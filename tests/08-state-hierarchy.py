@@ -37,7 +37,7 @@ try:
         pass
     try:
 	# check non-empty name
-        d.new_state(sm, "");
+        d.new_state(sm, "")
     except CyberiadaML.ParametersException:
         pass
 	
