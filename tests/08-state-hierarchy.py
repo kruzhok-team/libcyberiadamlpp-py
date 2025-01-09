@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 #  The Python binding for Cyberiada GraphML library
 # 
-#  The single state test
+#  The state hierarchy test
 # 
 #  Copyright (C) 2025 Alexey Fedoseev <aleksey@fedoseev.net>
 # 
@@ -26,10 +26,41 @@ import CyberiadaML
 
 try:
     d = CyberiadaML.Document()
-    sm = d.new_state_machine("SM");
-    d.new_state(sm, "First state", CyberiadaML.Action(), CyberiadaML.Rect(50, 50, 100, 25))
+
+    sm = d.new_state_machine("SM")
+
+    parent1 = d.new_state(sm, "Parent 0")
+    try:
+	# check id uniqueness
+        d.new_state(sm, "n0", "test")
+    except CyberiadaML.ParametersException:
+        pass
+    try:
+	# check non-empty name
+        d.new_state(sm, "");
+    except CyberiadaML.ParametersException:
+        pass
+	
+    assert parent1.is_simple_state()
+    d.new_state(parent1, "State 0-0")
+    assert parent1.is_composite_state()
+
+    subparent = d.new_state(parent1, "Subparent 0-1")
+    d.new_state(subparent, "State 0-1-0")
+    d.new_state(subparent, "State 0-1-1")
+	
+    parent2 = d.new_state(sm, "Parent 1")
+    d.new_state(parent2, "State 1-0")
+    d.new_state(parent2, "State 1-1")
+    try:
+	# check id uniqueness on the deep level
+        d.new_state(parent2, "n1::n1", "test")
+    except CyberiadaML.ParametersException:
+        pass
+
     print(d)
-    CyberiadaML.LocalDocument(d, sys.argv[0] + ".graphml").save(True)
+    CyberiadaML.LocalDocument(d, sys.argv[0] + ".graphml").save()
+
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))
