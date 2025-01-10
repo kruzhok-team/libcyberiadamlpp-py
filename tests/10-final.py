@@ -25,7 +25,7 @@ import traceback
 import CyberiadaML
 
 try:
-    d = CyberiadaML.Document();
+    d = CyberiadaML.Document()
     
     sm = d.new_state_machine("SM")
 
