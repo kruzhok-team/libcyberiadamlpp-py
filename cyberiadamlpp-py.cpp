@@ -351,6 +351,15 @@ protected:
 	}
 };
 
+static std::unique_ptr<cy::Polyline> polyline_from_list(const py::list& points)
+{
+	std::vector<cy::Point> v;
+	for (size_t i = 0; i < points.size(); i++) {
+		v.push_back(points[i].cast<cy::Point>());
+	}
+	return std::make_unique<cy::Polyline>(v);
+}
+
 PYBIND11_MODULE(CyberiadaML, m) {
     m.doc() = "Cyberiada GraphML C++ Library Binding"; // optional module docstring
 
@@ -405,6 +414,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Polyline>(m, "Polyline")
 		.def(py::init<>())
+		.def(py::init(&polyline_from_list))
+		.def(py::init<const std::vector<cy::Point>&>(), py::arg("points"))
 		.def("append", [](cy::Polyline& pl, const cy::Point& p){
 						   pl.push_back(p);
 					   })
