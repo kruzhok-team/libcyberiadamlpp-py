@@ -956,6 +956,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::bind_vector<std::vector<cy::StateMachine*>>(m, "StateMachinesRefList");
 	
 	py::register_exception<cy::Exception>(m, "Exception");
+	py::register_exception<cy::FileException>(m, "FileException");
 	py::register_exception<cy::FormatException>(m, "FormatException");
 	py::register_exception<cy::XMLException>(m, "XMLException");
 	py::register_exception<cy::CybMLException>(m, "CybMLException");
