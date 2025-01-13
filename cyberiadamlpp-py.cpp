@@ -630,6 +630,20 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 const>(&cy::ElementCollection::find_elements_by_types))
 		.def("find_elements_by_types",
 			 static_cast<cy::ElementList (cy::ElementCollection::*)(const cy::ElementTypes&)>(&cy::ElementCollection::find_elements_by_types))
+		.def("find_elements_by_types", [](const cy::ElementCollection &collection, const py::list& types) {
+										   	std::vector<cy::ElementType> v;
+											for (size_t i = 0; i < types.size(); i++) {
+												v.push_back(types[i].cast<cy::ElementType>());
+											}
+											return collection.find_elements_by_types(v);
+									   })
+		.def("find_elements_by_types", [](cy::ElementCollection &collection, const py::list& types) {
+										   	std::vector<cy::ElementType> v;
+											for (size_t i = 0; i < types.size(); i++) {
+												v.push_back(types[i].cast<cy::ElementType>());
+											}
+											return collection.find_elements_by_types(v);
+									   })
 		.def("get_bound_rect", &cy::ElementCollection::get_bound_rect)
 		.def("get_children",
 			 static_cast<cy::ConstElementList (cy::ElementCollection::*)() const>(&cy::ElementCollection::get_children))
