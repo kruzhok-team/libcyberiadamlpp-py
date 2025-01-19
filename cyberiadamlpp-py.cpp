@@ -40,6 +40,7 @@
 namespace py = pybind11;
 namespace cy = Cyberiada;
 
+PYBIND11_MAKE_OPAQUE(std::vector<cy::ID>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::Point>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::CommentSubject>);
 PYBIND11_MAKE_OPAQUE(std::vector<const cy::Element*>);
@@ -56,6 +57,7 @@ PYBIND11_MAKE_OPAQUE(std::vector<const cy::Transition*>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::Transition*>);
 PYBIND11_MAKE_OPAQUE(std::vector<const cy::StateMachine*>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::StateMachine*>);
+PYBIND11_MAKE_OPAQUE(std::vector<cy::SMIsomorphismFlagsResult>);
 
 class PyElement: public cy::Element {
 public:
@@ -716,9 +718,102 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_geometry_target_point", &cy::Transition::has_geometry_target_point)
 		.def("round_geometry", &cy::Transition::round_geometry);
 
+	m.attr("smiIdentical") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIdentical));
+	m.attr("smiEqual") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiEqual));
+	m.attr("smiIsomorphic") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIsomorphic));
+	m.attr("smiDiffStates") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiDiffStates));
+	m.attr("smiDiffInitial") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiDiffInitial));
+	m.attr("smiDiffEdges") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiDiffEdges));
+
+	m.attr("smiNodeDiffFlagID") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagID));
+	m.attr("smiNodeDiffFlagType") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagType));
+	m.attr("smiNodeDiffFlagTitle") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagTitle));
+	m.attr("smiNodeDiffFlagActions") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagActions));
+	m.attr("smiNodeDiffFlagSMLink") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagSMLink));
+	m.attr("smiNodeDiffFlagChildren") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagChildren));
+	m.attr("smiNodeDiffFlagEdges") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiNodeDiffFlagEdges));
+	m.attr("smiEdgeDiffFlagID") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiEdgeDiffFlagID));
+	m.attr("smiEdgeDiffFlagAction") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiEdgeDiffFlagAction));
+
 	py::class_<cy::StateMachine, cy::ElementCollection, PyStateMachine>(m, "StateMachine")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name") = cy::Name(""), py::arg("rect") = cy::Rect())
+		.def("check_isomorphism", &cy::StateMachine::check_isomorphism, py::arg("sm"),
+			 py::arg("ignore_comments") = true, py::arg("require_initial") = false)
+		.def("check_isomorphism", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
+									 bool ignore_comments, bool require_initial, py::str& new_initial,
+									 py::list& diff_nodes, py::list& diff_nodes_flags) {
+
+									  cy::ID _new_initial; 
+									  std::vector<cy::ID> _diff_nodes;
+									  std::vector<cy::SMIsomorphismFlagsResult> _diff_nodes_flags;
+
+									  cy::SMIsomorphismResult r = sm1.check_isomorphism_details(sm2, ignore_comments, require_initial,
+																								&_new_initial,
+																								&_diff_nodes,
+																								&_diff_nodes_flags,
+																								NULL,
+																								NULL,
+																								NULL,
+																								NULL,
+																								NULL,
+																								NULL);
+									  new_initial = std::string(_new_initial);
+									  for (size_t i = 0; i < _diff_nodes.size(); i++) {
+										  diff_nodes.append(std::string(_diff_nodes[i]));
+									  }
+									  for (size_t i = 0; i < _diff_nodes_flags.size(); i++) {
+										  diff_nodes_flags.append(static_cast<unsigned int>(_diff_nodes_flags[i]));
+									  }
+									  return r;									  
+								  })
+		.def("check_isomorphism", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
+									 bool ignore_comments, bool require_initial, py::str& new_initial,
+									 py::list& diff_nodes, py::list& diff_nodes_flags, py::list& new_nodes, py::list& missing_nodes,
+									 py::list& diff_edges, py::list& diff_edges_flags, py::list& new_edges, py::list& missing_edges) {
+
+									  cy::ID _new_initial; 
+									  std::vector<cy::ID> _diff_nodes, _new_nodes, _missing_nodes,
+										  _diff_edges, _new_edges, _missing_edges;
+									  std::vector<cy::SMIsomorphismFlagsResult> _diff_nodes_flags, _diff_edges_flags;
+
+									  cy::SMIsomorphismResult r = sm1.check_isomorphism_details(sm2, ignore_comments, require_initial,
+																								&_new_initial,
+																								&_diff_nodes,
+																								&_diff_nodes_flags,
+																								&_new_nodes,
+																								&_missing_nodes,
+																								&_diff_edges,
+																								&_diff_edges_flags,
+																								&_new_edges,
+																								&_missing_edges);
+									  new_initial = std::string(_new_initial);
+									  for (size_t i = 0; i < _diff_nodes.size(); i++) {
+										  diff_nodes.append(std::string(_diff_nodes[i]));
+									  }
+									  for (size_t i = 0; i < _diff_nodes_flags.size(); i++) {
+										  diff_nodes_flags.append(static_cast<unsigned int>(_diff_nodes_flags[i]));
+									  }
+									  for (size_t i = 0; i < _new_nodes.size(); i++) {
+										  new_nodes.append(std::string(_new_nodes[i]));
+									  }
+									  for (size_t i = 0; i < _missing_nodes.size(); i++) {
+										  missing_nodes.append(std::string(_missing_nodes[i]));
+									  }
+									  for (size_t i = 0; i < _diff_edges.size(); i++) {
+										  diff_edges.append(std::string(_diff_edges[i]));
+									  }
+									  for (size_t i = 0; i < _diff_edges_flags.size(); i++) {
+										  diff_edges_flags.append(static_cast<unsigned int>(_diff_edges_flags[i]));
+									  }
+									  for (size_t i = 0; i < _new_edges.size(); i++) {
+										  new_edges.append(std::string(_new_edges[i]));
+									  }
+									  for (size_t i = 0; i < _missing_edges.size(); i++) {
+										  missing_edges.append(std::string(_missing_edges[i]));
+									  }
+									  return r;
+								  })
 		.def("copy", &cy::StateMachine::copy, py::return_value_policy::copy)
 		.def("get_comments", static_cast<std::vector<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
 		.def("get_comments", static_cast<std::vector<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
