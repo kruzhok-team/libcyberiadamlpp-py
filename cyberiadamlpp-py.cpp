@@ -306,8 +306,11 @@ protected:
 
 class PyStateMachine: public cy::StateMachine {
 public:
-	using cy::StateMachine::StateMachine;
+	PyStateMachine(cy::Element* parent, const cy::ID& id, const cy::Name& name = "",
+				   const cy::Rect& r = cy::Rect()): cy::StateMachine(parent, id, name, r) {}
+	PyStateMachine(const cy::StateMachine& sm): cy::StateMachine(sm) {}
 
+	
 	cy::Element* copy(cy::Element* parent) const override {
 		PYBIND11_OVERRIDE(cy::Element*, cy::StateMachine, copy, parent);
 	}
@@ -377,6 +380,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("elementChoice", cy::ElementType::elementChoice)
 		.value("elementTerminate", cy::ElementType::elementTerminate)
 		.value("elementTransition", cy::ElementType::elementTransition)
+		.export_values();
+
+	py::enum_<cy::TransitionType>(m, "TransitionType")
+		.value("transitionExternal", cy::TransitionType::transitionExternal)
+		.value("transitionLocal", cy::TransitionType::transitionLocal)
 		.export_values();
 	
 	m.attr("QUALIFIED_NAME_SEPARATOR") = cy::String(cy::QUALIFIED_NAME_SEPARATOR);
@@ -689,9 +697,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("remove_element", &cy::State::add_element);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
-		.def(py::init<cy::Element*, const cy::ID&, const cy::ID&, const cy::ID&, const cy::Action&,
+		.def(py::init<cy::Element*, cy::TransitionType, const cy::ID&, const cy::ID&, const cy::ID&, const cy::Action&,
 			 const cy::Polyline&, const cy::Point&, const cy::Point&, const cy::Point&, const cy::Rect&, const cy::Color&>(),
-			 py::arg("parent"), py::arg("id"), py::arg("source"), py::arg("target"), py::arg("action"),
+			 py::arg("parent"), py::arg("ttype"), py::arg("id"), py::arg("source"), py::arg("target"), py::arg("action"),
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("copy", &cy::Transition::copy, py::return_value_policy::copy)
@@ -708,6 +716,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_geometry_target_point", &cy::Transition::get_target_point, py::return_value_policy::reference)
 		.def("get_source_element_id", &cy::Transition::source_element_id)
 		.def("get_target_element_id", &cy::Transition::target_element_id)
+		.def("get_transition_type", &cy::Transition::get_transition_type)
 		.def("has_action", &cy::Transition::has_action)
 		.def("has_color", &cy::Transition::has_color)
 		.def("has_geometry", &cy::Transition::has_geometry)
@@ -738,6 +747,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::class_<cy::StateMachine, cy::ElementCollection, PyStateMachine>(m, "StateMachine")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name") = cy::Name(""), py::arg("rect") = cy::Rect())
+		.def(py::init<const cy::StateMachine&>())
 		.def("check_isomorphism", &cy::StateMachine::check_isomorphism, py::arg("sm"),
 			 py::arg("ignore_comments") = true, py::arg("require_initial") = false)
 		.def("check_isomorphism", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
@@ -999,18 +1009,18 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("point") = cy::Point(),
 			 py::return_value_policy::reference)
 		.def("new_transition", static_cast<cy::Transition*
-			 (cy::Document::*)(cy::StateMachine*, const cy::ID&, cy::Element*, cy::Element*, const cy::Action&,
+			 (cy::Document::*)(cy::StateMachine*, cy::TransitionType, const cy::ID&, cy::Element*, cy::Element*, const cy::Action&,
 							   const cy::Polyline&, const cy::Point&, const cy::Point&, const cy::Point&, const cy::Rect&,
 							   const cy::Color&)>(&cy::Document::new_transition),
-			 py::arg("parent"), py::arg("id"), py::arg("source"), py::arg("target"), py::arg("action"),
+			 py::arg("parent"), py::arg("ttype"), py::arg("id"), py::arg("source"), py::arg("target"), py::arg("action"),
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)
 		.def("new_transition", static_cast<cy::Transition*
-			 (cy::Document::*)(cy::StateMachine*, cy::Element*, cy::Element*, const cy::Action&,
+			 (cy::Document::*)(cy::StateMachine*, cy::TransitionType, cy::Element*, cy::Element*, const cy::Action&,
 							   const cy::Polyline&, const cy::Point&, const cy::Point&, const cy::Point&, const cy::Rect&,
 							   const cy::Color&)>(&cy::Document::new_transition),
-			 py::arg("parent"), py::arg("source"), py::arg("target"), py::arg("action"),
+			 py::arg("parent"), py::arg("ttype"), py::arg("source"), py::arg("target"), py::arg("action"),
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)

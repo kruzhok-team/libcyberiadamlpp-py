@@ -30,16 +30,16 @@ try:
     parent1 = d.new_state(sm, "Parent 0")
     s1 = d.new_state(parent1, "State 0")
     s2 = d.new_state(parent1, "State 1")
-    d.new_transition(sm, s1, s2, CyberiadaML.Action())
-    d.new_transition(sm, s1, s2, CyberiadaML.Action("A"))
+    d.new_transition(sm, CyberiadaML.transitionExternal, s1, s2, CyberiadaML.Action())
+    d.new_transition(sm, CyberiadaML.transitionExternal, s1, s2, CyberiadaML.Action("A"))
     try:
         # check id uniqueness
-        d.new_transition(sm, "n0::n0-n0::n1", s1, s2, CyberiadaML.Action())
+        d.new_transition(sm, CyberiadaML.transitionExternal, "n0::n0-n0::n1", s1, s2, CyberiadaML.Action())
     except CyberiadaML.ParametersException:
         pass
     try:
         # check sm-related transition
-        d.new_transition(sm, sm, s1, CyberiadaML.Action())
+        d.new_transition(sm, CyberiadaML.transitionExternal, sm, s1, CyberiadaML.Action())
     except CyberiadaML.ParametersException:
         pass
 
@@ -47,20 +47,20 @@ try:
     pl.append(CyberiadaML.Point(0, 0))
     pl.append(CyberiadaML.Point(5, 10))
     pl.append(CyberiadaML.Point(15, 20))
-    d.new_transition(sm, s1, s1, CyberiadaML.Action("IDLE"), pl,
+    d.new_transition(sm, CyberiadaML.transitionExternal, s1, s1, CyberiadaML.Action("IDLE"), pl,
                      CyberiadaML.Point(-1, -2), CyberiadaML.Point(3, 4))
-    d.new_transition(sm, parent1, s1, CyberiadaML.Action("INSIDE"),
+    d.new_transition(sm, CyberiadaML.transitionExternal, parent1, s1, CyberiadaML.Action("INSIDE"),
                      CyberiadaML.Polyline(), CyberiadaML.Point(-1, -2), CyberiadaML.Point(3, 4))
-    d.new_transition(sm, s2, parent1, CyberiadaML.Action("OUTSIDE"),
+    d.new_transition(sm, CyberiadaML.transitionExternal, s2, parent1, CyberiadaML.Action("OUTSIDE"),
                      CyberiadaML.Polyline(), CyberiadaML.Point(-1, -2), CyberiadaML.Point(3, 4), CyberiadaML.Point(5, 6))
     try:
         # check transition action
-        d.new_transition(sm, s1, s2, CyberiadaML.Action(CyberiadaML.actionEntry, "init();"))
+        d.new_transition(sm, CyberiadaML.transitionExternal, s1, s2, CyberiadaML.Action(CyberiadaML.actionEntry, "init();"))
     except CyberiadaML.ParametersException:
         pass
     
     parent2 = d.new_state(sm, "Parent 1")
-    d.new_transition(sm, s2, parent2, CyberiadaML.Action("EVENT", "guard()", "action();"))
+    d.new_transition(sm, CyberiadaML.transitionExternal, s2, parent2, CyberiadaML.Action("EVENT", "guard()", "action();"))
 
     print(d)
     CyberiadaML.LocalDocument(d, sys.argv[0] + ".graphml").save()
