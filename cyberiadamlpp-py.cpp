@@ -889,7 +889,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("copy", &cy::Document::copy, py::return_value_policy::copy)
 		.def("decode", &cy::Document::decode,
 			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
-			 py::arg("reconstruct") = false)
+			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false)
 		.def("encode", &cy::Document::encode, py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)() const>(&cy::Document::get_bound_rect))
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)(const cy::Document&) const>(&cy::Document::get_bound_rect))
@@ -1039,7 +1039,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_file_path", &cy::LocalDocument::get_file_path)
 		.def("open", &cy::LocalDocument::open,
 			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
-			 py::arg("reconstruct") = false)
+			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false)
 		.def("reset", &cy::LocalDocument::reset)
 		.def("save", &cy::LocalDocument::save, "Save the previously opened document", py::arg("round") = false)
 		.def("save_as", &cy::LocalDocument::save_as,
