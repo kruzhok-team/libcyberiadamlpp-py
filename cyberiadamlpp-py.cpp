@@ -85,6 +85,12 @@ public:
 	bool has_geometry() const override {
 		PYBIND11_OVERRIDE_PURE(bool, cy::Element, has_geometry,);
 	}
+	bool has_point_geometry() const override {
+		PYBIND11_OVERRIDE_PURE(bool, cy::Element, has_point_geometry,);
+	}
+	bool has_rect_geometry() const override {
+		PYBIND11_OVERRIDE_PURE(bool, cy::Element, has_rect_geometry,);
+	}
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE_PURE(cy::Rect, cy::Element, get_bound_rect, d);
 	}
@@ -113,6 +119,12 @@ public:
 	bool has_geometry() const override {
 		PYBIND11_OVERRIDE(bool, cy::Comment, has_geometry,);
 	}
+	bool has_point_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::Comment, has_point_geometry,);
+	}
+	bool has_rect_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::Comment, has_rect_geometry,);
+	}
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE(cy::Rect, cy::Comment, get_bound_rect, d);
 	}
@@ -140,6 +152,12 @@ public:
 	}
 	bool has_geometry() const override {
 		PYBIND11_OVERRIDE(bool, cy::Vertex, has_geometry,);
+	}
+	bool has_point_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::Vertex, has_point_geometry,);
+	}
+	bool has_rect_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::Vertex, has_rect_geometry,);
 	}
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE(cy::Rect, cy::Vertex, get_bound_rect, d);
@@ -202,6 +220,12 @@ public:
 	bool has_geometry() const override {
 		PYBIND11_OVERRIDE(bool, cy::ChoicePseudostate, has_geometry,);
 	}
+	bool has_point_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::ChoicePseudostate, has_point_geometry,);
+	}
+	bool has_rect_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::ChoicePseudostate, has_rect_geometry,);
+	}
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE(cy::Rect, cy::ChoicePseudostate, get_bound_rect, d);
 	}
@@ -235,6 +259,12 @@ public:
 	}
 	bool has_geometry() const override {
 		PYBIND11_OVERRIDE(bool, cy::ElementCollection, has_geometry,);
+	}
+	bool has_point_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::ElementCollection, has_point_geometry,);
+	}
+	bool has_rect_geometry() const override {
+		PYBIND11_OVERRIDE(bool, cy::ElementCollection, has_rect_geometry,);
 	}
 	cy::Rect get_bound_rect(const cy::Document& d) const override {
 		PYBIND11_OVERRIDE(cy::Rect, cy::ElementCollection, get_bound_rect, d);
