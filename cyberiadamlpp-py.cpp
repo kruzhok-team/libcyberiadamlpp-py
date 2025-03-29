@@ -58,6 +58,7 @@ PYBIND11_MAKE_OPAQUE(std::vector<cy::Transition*>);
 PYBIND11_MAKE_OPAQUE(std::vector<const cy::StateMachine*>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::StateMachine*>);
 PYBIND11_MAKE_OPAQUE(std::vector<cy::SMIsomorphismFlagsResult>);
+PYBIND11_MAKE_OPAQUE(std::vector<std::pair<cy::String, cy::String>>);
 
 class PyElement: public cy::Element {
 public:
@@ -863,17 +864,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::class_<cy::DocumentMetainformation>(m, "DocumentMetainformation")
 		.def(py::init<>())
 		.def_readwrite("standard_version", &cy::DocumentMetainformation::standard_version)
-		.def_readwrite("platform_name", &cy::DocumentMetainformation::platform_name)
-		.def_readwrite("platform_version", &cy::DocumentMetainformation::platform_version)
-		.def_readwrite("platform_language", &cy::DocumentMetainformation::platform_language)
-		.def_readwrite("target_system", &cy::DocumentMetainformation::target_system)
-		.def_readwrite("name", &cy::DocumentMetainformation::name)
-		.def_readwrite("author", &cy::DocumentMetainformation::author)
-		.def_readwrite("contact", &cy::DocumentMetainformation::contact)
-		.def_readwrite("description", &cy::DocumentMetainformation::description) 
-		.def_readwrite("version", &cy::DocumentMetainformation::version)
-		.def_readwrite("date", &cy::DocumentMetainformation::date)
-		.def_readwrite("markup_language", &cy::DocumentMetainformation::markup_language)
+		.def_readwrite("strings", &cy::DocumentMetainformation::strings)
+		.def("get_string", &cy::DocumentMetainformation::get_string)
+		.def("set_string", &cy::DocumentMetainformation::set_string)
 		.def_readwrite("transition_order_flag", &cy::DocumentMetainformation::transition_order_flag)
 		.def_readwrite("event_propagation_flag", &cy::DocumentMetainformation::event_propagation_flag);
 
