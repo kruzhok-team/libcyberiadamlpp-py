@@ -29,9 +29,9 @@ try:
     ld.open(sys.argv[0] + "-input.graphml", CyberiadaML.formatCyberiada10,
             CyberiadaML.geometryFormatQt, False);
     d = CyberiadaML.Document(ld);
-    assert d.get_meta().name == "Test document";
+    assert d.get_meta().get_string("name") == "Test document";
     d.set_name("Test document 2");
-    assert d.get_meta().name == "Test document 2";
+    assert d.get_meta().get_string("name") == "Test document 2";
     print(d)
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))

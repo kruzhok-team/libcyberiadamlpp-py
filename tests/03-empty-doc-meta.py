@@ -27,17 +27,17 @@ import CyberiadaML
 try:
     d = CyberiadaML.LocalDocument()
     d.new_state_machine("SM", CyberiadaML.Rect())
-    d.get_meta().platform_name = "Berloga"
-    d.get_meta().platform_version = "1.4"
-    d.get_meta().platform_language = "script"
-    d.get_meta().target_system = "Unit"
-    d.get_meta().name = "Test document"
-    d.get_meta().author = "Author"
-    d.get_meta().contact = "platform@kruzhok.org"
-    d.get_meta().description = "1\n2\n3" 
-    d.get_meta().version = "0.1"
-    d.get_meta().date = "2024-04-14T11:22:00"
-    d.get_meta().markup_language = "html"
+    d.get_meta().set_string("platform", "Berloga")
+    d.get_meta().set_string("platformVersion", "1.4")
+    d.get_meta().set_string("platformLanguage", "script")
+    d.get_meta().set_string("target", "Unit")
+    d.get_meta().set_string("name", "Test document")
+    d.get_meta().set_string("author", "Author")
+    d.get_meta().set_string("contact", "platform@kruzhok.org")
+    d.get_meta().set_string("description", "1\n2\n3") 
+    d.get_meta().set_string("version", "0.1")
+    d.get_meta().set_string("date", "2024-04-14T11:22:00")
+    d.get_meta().set_string("markupLanguage", "html")
     d.get_meta().transition_order_flag = True # exit first
     d.get_meta().event_propagation_flag = True # propagate
     d.save_as(sys.argv[0] + ".graphml", CyberiadaML.formatCyberiada10, False)
