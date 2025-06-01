@@ -487,6 +487,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_elements_count", &cy::Element::elements_count)
 		.def("get_id", &cy::Element::get_id)
 		.def("get_index", &cy::Element::index)
+		.def("get_formal_name", &cy::Element::get_name)
 		.def("get_name", &cy::Element::get_name)
 		.def("get_parent", static_cast<const cy::Element* (cy::Element::*)() const>(&cy::Element::get_parent),
 			 py::return_value_policy::reference)
@@ -496,7 +497,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_type", &cy::Element::get_type)
 		.def("has_children", &cy::Element::has_children)
 		.def("has_geometry", &cy::Element::has_geometry)
-		.def("has_name", &cy::Element::has_name)
+		.def("has_formal_name", &cy::Element::has_name)
+		.def("has_name", &cy::Element::has_formal_name)
 		.def("has_qualified_name", &cy::Element::has_qualified_name)
 		.def("is_root", &cy::Element::is_root)
 		.def("round_geometry", &cy::Element::round_geometry)
@@ -713,18 +715,22 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("round_geometry", &cy::ElementCollection::round_geometry);
 
 	py::class_<cy::State, cy::ElementCollection, PyState>(m, "State")
-		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&>(),
-			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color())
+		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Rect&, const cy::Color&>(),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("rect") = cy::Rect(),
+			 py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("add_action", &cy::State::add_action)
 		.def("add_element", &cy::State::add_element)
 		.def("copy", &cy::State::copy, py::return_value_policy::copy)
 		.def("get_actions", static_cast<const std::vector<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
 		.def("get_actions", static_cast<std::vector<cy::Action>& (cy::State::*)()>(&cy::State::get_actions))
+		.def("get_region_geometry_rect", &cy::State::get_region_geometry_rect)
 		.def("get_substates", static_cast<std::vector<const cy::State*> (cy::State::*)() const>(&cy::State::get_substates))
 		.def("get_substates", static_cast<std::vector<cy::State*> (cy::State::*)()>(&cy::State::get_substates))
 		.def("has_actions", &cy::State::has_actions)
+		.def("is_collapsed", &cy::State::is_collapsed)
 		.def("is_composite_state", &cy::State::is_composite_state)
 		.def("is_simple_state", &cy::State::is_simple_state)
+		.def("set_collapsed", &cy::State::set_collapsed)
 		.def("remove_element", &cy::State::add_element);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
@@ -1002,15 +1008,15 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::return_value_policy::reference)
 		.def("new_state", static_cast<cy::State*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::String&, const cy::Action&,
-							   const cy::Rect&, const cy::Color&)>(&cy::Document::new_state),
+							   const cy::Rect&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_state),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("action") = cy::Action(),
-			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(),
+			 py::arg("rect") = cy::Rect(), py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)
 		.def("new_state", static_cast<cy::State*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::String&, const cy::Action&,
-							   const cy::Rect&, const cy::Color&)>(&cy::Document::new_state),
+							   const cy::Rect&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_state),
 			 py::arg("parent"), py::arg("name"), py::arg("action") = cy::Action(),
-			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(),
+			 py::arg("rect") = cy::Rect(), py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)
 		.def("new_state_machine", static_cast<cy::StateMachine*
 			 (cy::Document::*)(const cy::ID&, const cy::String&, const cy::Rect&)>(&cy::Document::new_state_machine),
