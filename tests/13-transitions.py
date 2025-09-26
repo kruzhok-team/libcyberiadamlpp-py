@@ -47,7 +47,7 @@ try:
     pl.append(CyberiadaML.Point(0, 0))
     pl.append(CyberiadaML.Point(5, 10))
     pl.append(CyberiadaML.Point(15, 20))
-    d.new_transition(sm, CyberiadaML.transitionExternal, s1, s1, CyberiadaML.Action("IDLE"), pl,
+    t1 = d.new_transition(sm, CyberiadaML.transitionExternal, s1, s1, CyberiadaML.Action("IDLE"), pl,
                      CyberiadaML.Point(-1, -2), CyberiadaML.Point(3, 4))
     d.new_transition(sm, CyberiadaML.transitionExternal, parent1, s1, CyberiadaML.Action("INSIDE"),
                      CyberiadaML.Polyline(), CyberiadaML.Point(-1, -2), CyberiadaML.Point(3, 4))
@@ -60,11 +60,19 @@ try:
         pass
     
     parent2 = d.new_state(sm, "Parent 1")
-    d.new_transition(sm, CyberiadaML.transitionExternal, s2, parent2, CyberiadaML.Action("EVENT", "guard()", "action();"))
+    t2 = d.new_transition(sm, CyberiadaML.transitionExternal, s2, parent2, CyberiadaML.Action("EVENT", "guard()", "action();"))
 
     print(d)
     CyberiadaML.LocalDocument(d, sys.argv[0] + ".graphml").save()
 
+    f = t1.compare_actions(t2)
+    assert not (f & CyberiadaML.adiffArguments)
+    assert not (f & CyberiadaML.adiffOrder)
+    assert not (f & CyberiadaML.adiffGuards)
+    assert f & CyberiadaML.adiffActions
+    assert not (f & CyberiadaML.adiffNumber)
+    assert not (f & CyberiadaML.adiffTypes)
+    
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))

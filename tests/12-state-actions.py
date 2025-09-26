@@ -48,6 +48,14 @@ try:
     print(d)
     CyberiadaML.LocalDocument(d, sys.argv[0] + ".graphml").save()
 
+    f = s1.compare_actions(s2)
+    assert not (f & CyberiadaML.adiffArguments)
+    assert not (f & CyberiadaML.adiffOrder)
+    assert not (f & CyberiadaML.adiffGuards)
+    assert f & CyberiadaML.adiffActions
+    assert f & CyberiadaML.adiffNumber
+    assert f & CyberiadaML.adiffTypes
+
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))

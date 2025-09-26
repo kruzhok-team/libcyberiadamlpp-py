@@ -640,6 +640,13 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_behavior", &cy::Action::get_behavior)
 		.def("__repr__", &cy::Action::to_str);
 	
+	m.attr("adiffArguments") = py::int_(static_cast<int>(cy::ActionDiff::adiffArguments));
+	m.attr("adiffOrder") = py::int_(static_cast<int>(cy::ActionDiff::adiffOrder));
+	m.attr("adiffActions") = py::int_(static_cast<int>(cy::ActionDiff::adiffActions));
+	m.attr("adiffTypes") = py::int_(static_cast<int>(cy::ActionDiff::adiffTypes));
+	m.attr("adiffGuards") = py::int_(static_cast<int>(cy::ActionDiff::adiffGuards));
+	m.attr("adiffNumber") = py::int_(static_cast<int>(cy::ActionDiff::adiffNumber));
+	
 	py::class_<cy::ElementCollection, cy::Element, PyElementCollection>(m, "ElementCollection")
 		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&>(),
 			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("name"),
@@ -731,7 +738,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_composite_state", &cy::State::is_composite_state)
 		.def("is_simple_state", &cy::State::is_simple_state)
 		.def("set_collapsed", &cy::State::set_collapsed)
-		.def("remove_element", &cy::State::add_element);
+		.def("remove_element", &cy::State::add_element)
+		.def("compare_actions", &cy::State::compare_actions);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
 		.def(py::init<cy::Element*, cy::TransitionType, const cy::ID&, const cy::ID&, const cy::ID&, const cy::Action&,
@@ -762,7 +770,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_geometry_polyline", &cy::Transition::has_polyline)
 		.def("has_geometry_source_point", &cy::Transition::has_geometry_source_point)
 		.def("has_geometry_target_point", &cy::Transition::has_geometry_target_point)
-		.def("round_geometry", &cy::Transition::round_geometry);
+		.def("round_geometry", &cy::Transition::round_geometry)
+		.def("compare_actions", &cy::Transition::compare_actions);
 
 	m.attr("smiIdentical") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIdentical));
 	m.attr("smiEqual") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiEqual));
