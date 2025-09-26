@@ -798,15 +798,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("ignore_comments") = true, py::arg("require_initial") = false)
 		.def("check_isomorphism", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
 									 bool ignore_comments, bool require_initial, py::str& new_initial,
-									 py::list& diff_nodes, py::list& diff_nodes_flags) {
+									 py::list& diff_nodes1, py::list& diff_nodes2, py::list& diff_nodes_flags) {
 
 									  cy::ID _new_initial; 
-									  std::vector<cy::ID> _diff_nodes;
+									  std::vector<cy::ID> _diff_nodes1, _diff_nodes2;
 									  std::vector<cy::SMIsomorphismFlagsResult> _diff_nodes_flags;
 
 									  cy::SMIsomorphismResult r = sm1.check_isomorphism_details(sm2, ignore_comments, require_initial,
 																								&_new_initial,
-																								&_diff_nodes,
+																								&_diff_nodes1,
+																								&_diff_nodes2,
 																								&_diff_nodes_flags,
 																								NULL,
 																								NULL,
@@ -815,8 +816,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 																								NULL,
 																								NULL);
 									  new_initial = std::string(_new_initial);
-									  for (size_t i = 0; i < _diff_nodes.size(); i++) {
-										  diff_nodes.append(std::string(_diff_nodes[i]));
+									  for (size_t i = 0; i < _diff_nodes1.size(); i++) {
+										  diff_nodes1.append(std::string(_diff_nodes1[i]));
+									  }
+									  for (size_t i = 0; i < _diff_nodes2.size(); i++) {
+										  diff_nodes2.append(std::string(_diff_nodes2[i]));
 									  }
 									  for (size_t i = 0; i < _diff_nodes_flags.size(); i++) {
 										  diff_nodes_flags.append(static_cast<unsigned int>(_diff_nodes_flags[i]));
@@ -825,27 +829,34 @@ PYBIND11_MODULE(CyberiadaML, m) {
 								  })
 		.def("check_isomorphism", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
 									 bool ignore_comments, bool require_initial, py::str& new_initial,
-									 py::list& diff_nodes, py::list& diff_nodes_flags, py::list& new_nodes, py::list& missing_nodes,
-									 py::list& diff_edges, py::list& diff_edges_flags, py::list& new_edges, py::list& missing_edges) {
+									 py::list& diff_nodes1, py::list& diff_nodes2, py::list& diff_nodes_flags,
+									 py::list& new_nodes, py::list& missing_nodes,
+									 py::list& diff_edges1, py::list& diff_edges2,
+									 py::list& diff_edges_flags, py::list& new_edges, py::list& missing_edges) {
 
 									  cy::ID _new_initial; 
-									  std::vector<cy::ID> _diff_nodes, _new_nodes, _missing_nodes,
-										  _diff_edges, _new_edges, _missing_edges;
+									  std::vector<cy::ID> _diff_nodes1, _diff_nodes2, _new_nodes, _missing_nodes,
+										  _diff_edges1, _diff_edges2, _new_edges, _missing_edges;
 									  std::vector<cy::SMIsomorphismFlagsResult> _diff_nodes_flags, _diff_edges_flags;
 
 									  cy::SMIsomorphismResult r = sm1.check_isomorphism_details(sm2, ignore_comments, require_initial,
 																								&_new_initial,
-																								&_diff_nodes,
+																								&_diff_nodes1,
+																								&_diff_nodes2,
 																								&_diff_nodes_flags,
 																								&_new_nodes,
 																								&_missing_nodes,
-																								&_diff_edges,
+																								&_diff_edges1,
+																								&_diff_edges2,
 																								&_diff_edges_flags,
 																								&_new_edges,
 																								&_missing_edges);
 									  new_initial = std::string(_new_initial);
-									  for (size_t i = 0; i < _diff_nodes.size(); i++) {
-										  diff_nodes.append(std::string(_diff_nodes[i]));
+									  for (size_t i = 0; i < _diff_nodes1.size(); i++) {
+										  diff_nodes1.append(std::string(_diff_nodes1[i]));
+									  }
+									  for (size_t i = 0; i < _diff_nodes2.size(); i++) {
+										  diff_nodes2.append(std::string(_diff_nodes2[i]));
 									  }
 									  for (size_t i = 0; i < _diff_nodes_flags.size(); i++) {
 										  diff_nodes_flags.append(static_cast<unsigned int>(_diff_nodes_flags[i]));
@@ -856,8 +867,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 									  for (size_t i = 0; i < _missing_nodes.size(); i++) {
 										  missing_nodes.append(std::string(_missing_nodes[i]));
 									  }
-									  for (size_t i = 0; i < _diff_edges.size(); i++) {
-										  diff_edges.append(std::string(_diff_edges[i]));
+									  for (size_t i = 0; i < _diff_edges1.size(); i++) {
+										  diff_edges1.append(std::string(_diff_edges1[i]));
+									  }
+									  for (size_t i = 0; i < _diff_edges2.size(); i++) {
+										  diff_edges2.append(std::string(_diff_edges2[i]));
 									  }
 									  for (size_t i = 0; i < _diff_edges_flags.size(); i++) {
 										  diff_edges_flags.append(static_cast<unsigned int>(_diff_edges_flags[i]));

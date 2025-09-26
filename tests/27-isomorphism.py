@@ -44,11 +44,12 @@ try:
     assert sm1.check_isomorphism(sm3) == CyberiadaML.smiIsomorphic
 
     new_initial = ''
-    diff_nodes = []
+    diff_nodes1 = []
+    diff_nodes2 = []
     diff_nodes_flags = []
-    assert sm4.check_isomorphism(sm5, True, False, new_initial, diff_nodes, diff_nodes_flags) == CyberiadaML.smiIsomorphic
-    assert len(diff_nodes) == 6
-    assert diff_nodes[2] == 'node-0-0-0'
+    assert sm4.check_isomorphism(sm5, True, False, new_initial, diff_nodes1, diff_nodes2, diff_nodes_flags) == CyberiadaML.smiIsomorphic
+    assert len(diff_nodes2) == 6
+    assert diff_nodes2[2] == 'node-0-0-0'
     assert len(diff_nodes_flags)
     assert diff_nodes_flags[3] | CyberiadaML.smiNodeDiffFlagTitle
     for f in diff_nodes_flags:
