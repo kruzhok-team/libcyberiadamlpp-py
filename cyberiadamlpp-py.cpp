@@ -494,6 +494,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_parent", static_cast<cy::Element* (cy::Element::*)()>(&cy::Element::get_parent),
 			 py::return_value_policy::reference)
 		.def("get_qualified_name", &cy::Element::qualified_name)
+		.def("get_full_qualified_name", &cy::Element::full_qualified_name)
 		.def("get_type", &cy::Element::get_type)
 		.def("has_children", &cy::Element::has_children)
 		.def("has_geometry", &cy::Element::has_geometry)
