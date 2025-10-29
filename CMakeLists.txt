@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(cyberiadamlpp-python VERSION 1.0)
 
+set (PYTHON_EXECUTABLE "/usr/bin/python3")
 set(cyberiadaml_DIR /usr/lib/cmake)
 find_package(cyberiadaml REQUIRED)
 set(cyberiadamlpp_DIR /usr/lib/cmake)
@@ -11,12 +12,18 @@ if(!cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
-set (PYTHON_EXECUTABLE "/usr/bin/python3")
+find_package(Python3 REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
 if(!pybind11_FOUND)
   message(FATAL_ERROR "Cannot find pybind11 library")
 endif()
+
+if(!Python3_FOUND)
+  message(FATAL_ERROR "Cannot find python3")
+endif()
+
+set (PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
 
 string(REPLACE "." ";" pybind11_VERSION_list "${pybind11_VERSION}")
 list(GET pybind11_VERSION_list 0 PYBIND_MAJOR_VERSION)
@@ -34,6 +41,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(CyberiadaML MODULE cyberiadamlpp-py.cpp)
 set_target_properties(CyberiadaML PROPERTIES PREFIX "")
+install(TARGETS CyberiadaML DESTINATION ${Python3_SITELIB})
 
 if (WIN32)
   add_custom_command(TARGET CyberiadaML
