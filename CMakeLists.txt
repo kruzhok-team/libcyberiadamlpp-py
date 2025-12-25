@@ -57,6 +57,7 @@ endif()
 
 target_include_directories(CyberiadaML PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${Python3_INCLUDE_DIRS}
   ${cyberiadaml_INCLUDE_DIRS}
   ${cyberiadamlpp_INCLUDE_DIRS}
 )
