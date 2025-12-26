@@ -943,7 +943,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("decode", &cy::Document::decode,
 			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false)
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
 		.def("encode", &cy::Document::encode, py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)() const>(&cy::Document::get_bound_rect))
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)(const cy::Document&) const>(&cy::Document::get_bound_rect))
@@ -1094,7 +1094,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("open", &cy::LocalDocument::open,
 			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false)
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
 		.def("reset", &cy::LocalDocument::reset)
 		.def("save", &cy::LocalDocument::save, "Save the previously opened document", py::arg("round") = false)
 		.def("save_as", &cy::LocalDocument::save_as,
