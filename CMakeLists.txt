@@ -12,7 +12,7 @@ if(!cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
-find_package(Python3 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
 if(!pybind11_FOUND)
@@ -92,3 +92,11 @@ endforeach()
 file(COPY_FILE
   ${PROJECT_SOURCE_DIR}/run-tests.sh
   ${PROJECT_BINARY_DIR}/run-tests.sh ONLY_IF_DIFFERENT)
+
+configure_file ("${PROJECT_SOURCE_DIR}/CyberiadaMLPyPackOptions.cmake.in"
+                "${PROJECT_BINARY_DIR}/CyberiadaMLPyPackOptions.cmake"
+                @ONLY)
+set (CPACK_PROJECT_CONFIG_FILE
+     "${PROJECT_BINARY_DIR}/CyberiadaMLPyPackOptions.cmake")
+
+include(CPack)
