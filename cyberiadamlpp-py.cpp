@@ -439,6 +439,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def_readwrite("valid", &cy::Point::valid)
 		.def_readwrite("x", &cy::Point::x)
 		.def_readwrite("y", &cy::Point::y)
+		.def("round", static_cast<void (cy::Point::*)()>(&cy::Point::round))
 		.def("__repr__", &cy::Point::to_str);
 
 	py::class_<cy::Rect>(m, "Rect")
@@ -451,6 +452,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def_readwrite("y", &cy::Rect::y)
 		.def_readwrite("width", &cy::Rect::width)
 		.def_readwrite("height", &cy::Rect::height)
+		.def("expand", static_cast<void (cy::Rect::*)(const cy::Point&, const cy::Document&)>(&cy::Rect::expand))
+		.def("expand", static_cast<void (cy::Rect::*)(const cy::Rect&, const cy::Document&)>(&cy::Rect::expand))
+		.def("expand", static_cast<void (cy::Rect::*)(const cy::Polyline&, const cy::Document&)>(&cy::Rect::expand))
+		.def("round", static_cast<void (cy::Rect::*)()>(&cy::Rect::round))
+		.def("almost_equal", &cy::Rect::almost_equal)
 		.def("__repr__", &cy::Rect::to_str);
 
 	py::class_<cy::Polyline>(m, "Polyline")
@@ -476,6 +482,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 							 return py::make_iterator(pl.begin(), pl.end());
 						 },
 			 py::keep_alive<0, 1>())
+		.def("round", &cy::Polyline::round)
 		.def("__len__", &cy::Polyline::size)		
 		.def("__repr__", &cy::Polyline::to_str);
 
@@ -503,7 +510,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_qualified_name", &cy::Element::has_qualified_name)
 		.def("is_root", &cy::Element::is_root)
 		.def("round_geometry", &cy::Element::round_geometry)
+		.def("set_id", &cy::Element::set_id)
 		.def("set_name", &cy::Element::set_name)
+		.def("set_formal_name", &cy::Element::set_formal_name)
 		.def("__repr__", &cy::Element::dump_to_str);
 
 	py::enum_<cy::CommentSubjectType>(m, "CommentSubjectType")
@@ -572,7 +581,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_machine_readable", &cy::Comment::is_machine_readable)
 		.def("remove_subject", &cy::Comment::remove_subject)
 		.def("round_geometry", &cy::Comment::round_geometry)
-		.def("set_body", &cy::Comment::set_body);
+		.def("set_body", &cy::Comment::set_body)
+		.def("update_geometry", &cy::Comment::update_geometry);
 
 	py::class_<cy::Vertex, cy::Element, PyVertex>(m, "Vertex")
 		.def("clean_geometry", &cy::Vertex::clean_geometry)
@@ -581,7 +591,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_geometry_point", &cy::Vertex::get_geometry_point, py::return_value_policy::reference)
 		.def("has_children", &cy::Vertex::has_children)
 		.def("has_geometry", &cy::Vertex::has_geometry)
-		.def("round_geometry", &cy::Vertex::round_geometry);
+		.def("round_geometry", &cy::Vertex::round_geometry)
+		.def("update_geometry", &cy::Vertex::update_geometry);
 	
 	py::class_<cy::Pseudostate, cy::Vertex, PyPseudostate>(m, "Pseudostate");
 
@@ -627,10 +638,18 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("actionExit", cy::ActionType::actionExit)
 		.export_values();
 	
+	py::enum_<cy::EventPropagation>(m, "EventPropagation")
+		.value("eventPropagationNone", cy::EventPropagation::eventPropagationNone)
+		.value("eventPropagationBlock", cy::EventPropagation::eventPropagationBlock)
+		.value("eventPropagationPropagate", cy::EventPropagation::eventPropagationPropagate)
+		.value("eventPropagationDefer", cy::EventPropagation::eventPropagationDefer)
+		.export_values();
+
 	py::class_<cy::Action>(m, "Action")
 		.def(py::init<cy::ActionType, const cy::Behavior&>(), py::arg("type"), py::arg("behavior") = cy::Behavior())
-		.def(py::init<const cy::Event&, const cy::Guard&, const cy::Behavior&>(),
-			 py::arg("trigger") = cy::Event(), py::arg("guard") = cy::Guard(), py::arg("behavior") = cy::Behavior())
+		.def(py::init<const cy::Event&, const cy::Guard&, const cy::Behavior&, cy::EventPropagation>(),
+			 py::arg("trigger") = cy::Event(), py::arg("guard") = cy::Guard(), py::arg("behavior") = cy::Behavior(),
+			 py::arg("propagation") = cy::eventPropagationNone)
 		.def("is_empty_transition", &cy::Action::is_empty_transition)
 		.def("get_type", &cy::Action::get_type)
 		.def("has_trigger", &cy::Action::has_trigger)
@@ -639,6 +658,13 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_guard", &cy::Action::get_guard)
 		.def("has_behavior", &cy::Action::has_behavior)
 		.def("get_behavior", &cy::Action::get_behavior)
+		.def("has_propagation", &cy::Action::has_propagation)
+		.def("get_propagation", &cy::Action::get_propagation)
+		.def("update", static_cast<void (cy::Action::*)(const cy::Behavior&)>(&cy::Action::update))
+		.def("update", static_cast<void (cy::Action::*)(const cy::Event&, const cy::Guard&, const cy::Behavior&,
+			 cy::EventPropagation)>(&cy::Action::update),
+			 py::arg("trigger"), py::arg("guard"), py::arg("behavior"), py::arg("propagation") = cy::eventPropagationNone)
+		.def("clear", &cy::Action::clear)
 		.def("__repr__", &cy::Action::to_str);
 	
 	m.attr("adiffArguments") = py::int_(static_cast<int>(cy::ActionDiff::adiffArguments));
@@ -647,6 +673,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	m.attr("adiffTypes") = py::int_(static_cast<int>(cy::ActionDiff::adiffTypes));
 	m.attr("adiffGuards") = py::int_(static_cast<int>(cy::ActionDiff::adiffGuards));
 	m.attr("adiffNumber") = py::int_(static_cast<int>(cy::ActionDiff::adiffNumber));
+	m.attr("adiffPropagation") = py::int_(static_cast<int>(cy::ActionDiff::adiffPropagation));
 	
 	py::class_<cy::ElementCollection, cy::Element, PyElementCollection>(m, "ElementCollection")
 		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&>(),
@@ -720,7 +747,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_initial", &cy::ElementCollection::has_initial)
 		.def("has_qualified_name", &cy::ElementCollection::has_qualified_name)
 		.def("remove_element", &cy::ElementCollection::remove_element)
-		.def("round_geometry", &cy::ElementCollection::round_geometry);
+		.def("round_geometry", &cy::ElementCollection::round_geometry)
+		.def("update_geometry", &cy::ElementCollection::update_geometry);
 
 	py::class_<cy::State, cy::ElementCollection, PyState>(m, "State")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Rect&, const cy::Color&>(),
@@ -739,6 +767,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_composite_state", &cy::State::is_composite_state)
 		.def("is_simple_state", &cy::State::is_simple_state)
 		.def("set_collapsed", &cy::State::set_collapsed)
+		.def("has_region_geometry", &cy::State::has_region_geometry)
+		.def("update_region_geometry_rect", &cy::State::update_region_geometry_rect)
 		.def("remove_element", &cy::State::remove_element)
 		.def("compare_actions", &cy::State::compare_actions);
 
@@ -772,6 +802,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_geometry_source_point", &cy::Transition::has_geometry_source_point)
 		.def("has_geometry_target_point", &cy::Transition::has_geometry_target_point)
 		.def("round_geometry", &cy::Transition::round_geometry)
+		.def("update", static_cast<void (cy::Transition::*)(const cy::Point&, const cy::Point&)>(&cy::Transition::update))
+		.def("update", static_cast<void (cy::Transition::*)(const cy::Polyline&)>(&cy::Transition::update))
+		.def("update", static_cast<void (cy::Transition::*)(const cy::ID&, const cy::ID&)>(&cy::Transition::update))
 		.def("compare_actions", &cy::Transition::compare_actions);
 
 	m.attr("smiIdentical") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIdentical));
@@ -885,6 +918,33 @@ PYBIND11_MODULE(CyberiadaML, m) {
 									  }
 									  return r;
 								  })
+		.def("check_isomorphism_details", [](const cy::StateMachine &sm1, const cy::StateMachine &sm2,
+													  bool ignore_comments, bool require_initial) {
+													  cy::ID _new_initial;
+													  std::vector<cy::ID> _diff_nodes1, _diff_nodes2, _new_nodes, _missing_nodes,
+														  _diff_edges1, _diff_edges2, _new_edges, _missing_edges;
+													  std::vector<cy::SMIsomorphismFlagsResult> _diff_nodes_flags, _diff_edges_flags;
+													  cy::SMIsomorphismResult r = sm1.check_isomorphism_details(sm2, ignore_comments, require_initial,
+																								&_new_initial,
+																								&_diff_nodes1, &_diff_nodes2, &_diff_nodes_flags,
+																								&_new_nodes, &_missing_nodes,
+																								&_diff_edges1, &_diff_edges2, &_diff_edges_flags,
+																								&_new_edges, &_missing_edges);
+													  auto ids = [](const std::vector<cy::ID>& v) {
+														  py::list l;
+														  for (size_t i = 0; i < v.size(); i++) l.append(std::string(v[i]));
+														  return l;
+													  };
+													  py::list nflags, eflags;
+													  for (size_t i = 0; i < _diff_nodes_flags.size(); i++) nflags.append(static_cast<unsigned int>(_diff_nodes_flags[i]));
+													  for (size_t i = 0; i < _diff_edges_flags.size(); i++) eflags.append(static_cast<unsigned int>(_diff_edges_flags[i]));
+													  return py::make_tuple(r, std::string(_new_initial),
+																		ids(_diff_nodes1), ids(_diff_nodes2), nflags,
+																		ids(_new_nodes), ids(_missing_nodes),
+																		ids(_diff_edges1), ids(_diff_edges2), eflags,
+																		ids(_new_edges), ids(_missing_edges));
+												  },
+			 py::arg("sm"), py::arg("ignore_comments") = true, py::arg("require_initial") = false)
 		.def("copy", &cy::StateMachine::copy, py::return_value_policy::copy)
 		.def("get_comments", static_cast<std::vector<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
 		.def("get_comments", static_cast<std::vector<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
@@ -937,6 +997,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("comment"), py::arg("element"), py::arg("fragment"),
 			 py::arg("source") = cy::Point(), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline(),
 			 py::return_value_policy::reference)
+		.def("check_geometry", &cy::Document::check_geometry)
 		.def("clean_geometry", &cy::Document::clean_geometry)
 		.def("convert_geometry", &cy::Document::convert_geometry)
 		.def("copy", &cy::Document::copy, py::return_value_policy::copy)
@@ -1078,8 +1139,10 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)
+		.def("get_meta_element", &cy::Document::get_meta_element, py::return_value_policy::reference)
 		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
 		.def("set_name", &cy::Document::set_name)
+		.def("update_metainfo_from_comment", &cy::Document::update_metainfo_from_comment)
         .def("reset", &cy::Document::reset, "Reset the document", py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone);
 
 	py::class_<cy::LocalDocument, cy::Document, PyLocalDocument>(m, "LocalDocument")
@@ -1129,6 +1192,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::bind_vector<std::vector<const cy::StateMachine*>>(m, "ConstStateMachinesRefList");
 	py::bind_vector<std::vector<cy::StateMachine*>>(m, "StateMachinesRefList");
 	
+	m.def("cleanup_library", &cy::cleanup_library);
+
 	py::register_exception<cy::Exception>(m, "Exception");
 	py::register_exception<cy::FileException>(m, "FileException");
 	py::register_exception<cy::FormatException>(m, "FormatException");
