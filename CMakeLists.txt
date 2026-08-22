@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.21)
 
 project(cyberiadamlpp-python VERSION 1.0)
 
-set (PYTHON_EXECUTABLE "/usr/bin/python3")
 if(NOT DEFINED cyberiadaml_DIR)
   set(cyberiadaml_DIR /usr/lib/cmake)
 endif()
@@ -16,7 +15,7 @@ if(!cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
 if(!pybind11_FOUND)
