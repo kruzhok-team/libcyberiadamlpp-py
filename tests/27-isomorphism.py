@@ -50,10 +50,21 @@ try:
     assert sm4.check_isomorphism(sm5, True, False, new_initial, diff_nodes1, diff_nodes2, diff_nodes_flags) == CyberiadaML.smiIsomorphic
     assert len(diff_nodes2) == 6
     assert diff_nodes2[2] == 'node-0-0-0'
-    assert len(diff_nodes_flags)
-    assert diff_nodes_flags[3] | CyberiadaML.smiNodeDiffFlagTitle
+    assert len(diff_nodes_flags) == 6
+    assert diff_nodes_flags[3] & CyberiadaML.smiNodeDiffFlagTitle
     for f in diff_nodes_flags:
-        assert f | CyberiadaML.smiNodeDiffFlagID
+        assert f & CyberiadaML.smiNodeDiffFlagID
+
+    (res, new_initial, diff_nodes1, diff_nodes2, diff_nodes_flags,
+     new_nodes, missing_nodes, diff_edges1, diff_edges2, diff_edges_flags,
+     new_edges, missing_edges) = sm4.check_isomorphism_details(sm5)
+    assert res == CyberiadaML.smiIsomorphic
+    assert len(diff_nodes2) == 6
+    assert diff_nodes2[2] == 'node-0-0-0'
+    assert len(diff_nodes_flags) == 6
+    assert diff_nodes_flags[3] & CyberiadaML.smiNodeDiffFlagTitle
+    for f in diff_nodes_flags:
+        assert f & CyberiadaML.smiNodeDiffFlagID
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))
