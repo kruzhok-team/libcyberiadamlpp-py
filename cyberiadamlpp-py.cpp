@@ -488,7 +488,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Element, PyElement>(m, "Element")
 		.def("clean_geometry", &cy::Element::clean_geometry)
-		.def("copy", &cy::Element::copy, py::return_value_policy::copy)
+		.def("copy", &cy::Element::copy, py::return_value_policy::take_ownership)
 		.def("get_bound_rect", &cy::Element::get_bound_rect)
 		.def("get_children_count", &cy::Element::children_count)
 		.def("get_elements_count", &cy::Element::elements_count)
@@ -508,6 +508,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_formal_name", &cy::Element::has_formal_name)
 		.def("has_name", &cy::Element::has_name)
 		.def("has_qualified_name", &cy::Element::has_qualified_name)
+		.def("index", &cy::Element::index)
 		.def("is_root", &cy::Element::is_root)
 		.def("round_geometry", &cy::Element::round_geometry)
 		.def("set_id", &cy::Element::set_id)
@@ -564,7 +565,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("add_subject", &cy::Comment::add_subject, py::return_value_policy::reference)
 		.def("clean_geometry", &cy::Comment::clean_geometry)
-		.def("copy", &cy::Comment::copy, py::return_value_policy::copy)
+		.def("copy", &cy::Comment::copy, py::return_value_policy::take_ownership)
 		.def("get_body", &cy::Comment::get_body)
 		.def("get_bound_rect", &cy::Comment::get_bound_rect, py::return_value_policy::reference)
 		.def("get_color", &cy::Comment::get_color)
@@ -586,7 +587,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Vertex, cy::Element, PyVertex>(m, "Vertex")
 		.def("clean_geometry", &cy::Vertex::clean_geometry)
-		.def("copy", &cy::Vertex::copy, py::return_value_policy::copy)
+		.def("copy", &cy::Vertex::copy, py::return_value_policy::take_ownership)
 		.def("get_bound_rect", &cy::Vertex::get_bound_rect)
 		.def("get_geometry_point", &cy::Vertex::get_geometry_point, py::return_value_policy::reference)
 		.def("has_children", &cy::Vertex::has_children)
@@ -601,7 +602,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point())
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point())
-		.def("copy", &cy::InitialPseudostate::copy, py::return_value_policy::copy);
+		.def("copy", &cy::InitialPseudostate::copy, py::return_value_policy::take_ownership);
 
 	py::class_<cy::ChoicePseudostate, cy::Pseudostate, PyChoicePseudostate>(m, "Choice")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Rect&, const cy::Color&>(),
@@ -610,7 +611,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("id"), py::arg("name") = cy::String(), py::arg("rect") = cy::Rect(),
 			 py::arg("color") = cy::Color())
 		.def("clean_geometry", &cy::ChoicePseudostate::clean_geometry)
-		.def("copy", &cy::ChoicePseudostate::copy, py::return_value_policy::copy)
+		.def("copy", &cy::ChoicePseudostate::copy, py::return_value_policy::take_ownership)
 		.def("get_bound_rect", &cy::ChoicePseudostate::get_bound_rect)
 		.def("get_color", &cy::ChoicePseudostate::get_color)
 		.def("get_geometry_rect", &cy::ChoicePseudostate::get_geometry_rect, py::return_value_policy::reference)
@@ -623,14 +624,14 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point())
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point())
-		.def("copy", &cy::TerminatePseudostate::copy, py::return_value_policy::copy);
+		.def("copy", &cy::TerminatePseudostate::copy, py::return_value_policy::take_ownership);
 
 	py::class_<cy::FinalState, cy::Vertex, PyFinalState>(m, "Final")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point())
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point())
-		.def("copy", &cy::FinalState::copy, py::return_value_policy::copy);
+		.def("copy", &cy::FinalState::copy, py::return_value_policy::take_ownership);
 
 	py::enum_<cy::ActionType>(m, "ActionType")
 		.value("actionTransition", cy::ActionType::actionTransition) 
@@ -684,7 +685,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("children_count", &cy::ElementCollection::children_count)
 		.def("clean_geometry", &cy::ElementCollection::clean_geometry)
 		.def("clear", &cy::ElementCollection::clear)
-		.def("copy", &cy::ElementCollection::copy, py::return_value_policy::copy)
+		.def("copy", &cy::ElementCollection::copy, py::return_value_policy::take_ownership)
 		.def("element_index", &cy::ElementCollection::element_index)
 		.def("elements_count", &cy::ElementCollection::elements_count)
 		.def("first_element",
@@ -756,7 +757,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("add_action", &cy::State::add_action)
 		.def("add_element", &cy::State::add_element)
-		.def("copy", &cy::State::copy, py::return_value_policy::copy)
+		.def("copy", &cy::State::copy, py::return_value_policy::take_ownership)
 		.def("get_actions", static_cast<const std::vector<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
 		.def("get_actions", static_cast<std::vector<cy::Action>& (cy::State::*)()>(&cy::State::get_actions))
 		.def("get_region_geometry_rect", &cy::State::get_region_geometry_rect)
@@ -778,7 +779,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("ttype"), py::arg("id"), py::arg("source"), py::arg("target"), py::arg("action"),
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color())
-		.def("copy", &cy::Transition::copy, py::return_value_policy::copy)
+		.def("copy", &cy::Transition::copy, py::return_value_policy::take_ownership)
 		.def("get_action", static_cast<const cy::Action& (cy::Transition::*)() const>(&cy::Transition::get_action),
 			 py::return_value_policy::reference)
 		.def("get_action", static_cast<cy::Action& (cy::Transition::*)()>(&cy::Transition::get_action),
@@ -945,7 +946,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 																		ids(_new_edges), ids(_missing_edges));
 												  },
 			 py::arg("sm"), py::arg("ignore_comments") = true, py::arg("require_initial") = false)
-		.def("copy", &cy::StateMachine::copy, py::return_value_policy::copy)
+		.def("copy", &cy::StateMachine::copy, py::return_value_policy::take_ownership)
 		.def("get_comments", static_cast<std::vector<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
 		.def("get_comments", static_cast<std::vector<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
 		.def("get_transitions", static_cast<std::vector<const cy::Transition*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_transitions))
@@ -967,45 +968,62 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::ID&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element),
 			 py::arg("comment"), py::arg("element"), py::arg("id"), py::arg("source") = cy::Point(), py::arg("target") = cy::Point(),
-			 py::arg("polyline") = cy::Polyline(), py::return_value_policy::reference)
+			 py::arg("polyline") = cy::Polyline(), py::return_value_policy::copy)
 		.def("add_comment_to_element", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element),
 			 py::arg("comment"), py::arg("element"), py::arg("source") = cy::Point(), py::arg("target") = cy::Point(),
-			 py::arg("polyline") = cy::Polyline(), py::return_value_policy::reference)
+			 py::arg("polyline") = cy::Polyline(), py::return_value_policy::copy)
 		.def("add_comment_to_element_body", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::String&, const cy::ID&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element_body),
 			 py::arg("comment"), py::arg("element"), py::arg("fragment"), py::arg("id"),
 			 py::arg("source") = cy::Point(), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline(),
-			 py::return_value_policy::reference)
+			 py::return_value_policy::copy)
 		.def("add_comment_to_element_body", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::String&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element_body),
 			 py::arg("comment"), py::arg("element"), py::arg("fragment"),
 			 py::arg("source") = cy::Point(), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline(),
-			 py::return_value_policy::reference)
+			 py::return_value_policy::copy)
 		.def("add_comment_to_element_name", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::String&, const cy::ID&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element_name),
 			 py::arg("comment"), py::arg("element"), py::arg("fragment"), py::arg("id"),
 			 py::arg("source") = cy::Point(), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline(),
-			 py::return_value_policy::reference)
+			 py::return_value_policy::copy)
 		.def("add_comment_to_element_name", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::String&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element_name),
 			 py::arg("comment"), py::arg("element"), py::arg("fragment"),
 			 py::arg("source") = cy::Point(), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline(),
-			 py::return_value_policy::reference)
+			 py::return_value_policy::copy)
 		.def("check_geometry", &cy::Document::check_geometry)
 		.def("clean_geometry", &cy::Document::clean_geometry)
 		.def("convert_geometry", &cy::Document::convert_geometry)
-		.def("copy", &cy::Document::copy, py::return_value_policy::copy)
+		.def("copy", &cy::Document::copy, py::return_value_policy::take_ownership)
 		.def("decode", &cy::Document::decode,
 			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
 			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
 		.def("encode", &cy::Document::encode, py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
+		.def("encode", [](cy::Document& d, cy::DocumentFormat f, bool round) {
+						   cy::String buffer;
+						   d.encode(buffer, f, round);
+						   return buffer;
+					   },
+			 py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
+		.def("decode", [](cy::Document& d, const cy::String& buffer, cy::DocumentFormat f, cy::DocumentGeometryFormat gf,
+						  bool reconstruct, bool reconstruct_sm, bool skip_empty_actions,
+						  bool simplify_ids, bool skip_meta_format) {
+						   cy::String format_str;
+						   d.decode(buffer, f, format_str, gf, reconstruct, reconstruct_sm,
+									skip_empty_actions, simplify_ids, skip_meta_format);
+						   return py::make_tuple(f, format_str);
+					   },
+			 py::arg("buffer"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
+			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)() const>(&cy::Document::get_bound_rect))
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)(const cy::Document&) const>(&cy::Document::get_bound_rect))
 		.def("get_geometry_format", &cy::Document::get_geometry_format)
@@ -1139,6 +1157,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("polyline") = cy::Polyline(), py::arg("sp") = cy::Point(), py::arg("tp") = cy::Point(),
 			 py::arg("label_point") = cy::Point(), py::arg("label_rect") = cy::Rect(), py::arg("color") = cy::Color(),
 			 py::return_value_policy::reference)
+		.def("meta", static_cast<cy::DocumentMetainformation& (cy::Document::*)()>(&cy::Document::meta),
+			 py::return_value_policy::reference_internal)
 		.def("get_meta_element", &cy::Document::get_meta_element, py::return_value_policy::reference)
 		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
 		.def("set_name", &cy::Document::set_name)
@@ -1150,7 +1170,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def(py::init<const cy::Document&, const cy::String&>())
 		.def(py::init<const cy::Document&, const cy::String&, cy::DocumentFormat>())
         .def(py::init<const cy::LocalDocument&>())
-		.def("copy", &cy::LocalDocument::copy, py::return_value_policy::copy)
+		.def("copy", &cy::LocalDocument::copy, py::return_value_policy::take_ownership)
 		.def("get_file_format", &cy::LocalDocument::get_file_format)
 		.def("get_file_format_str", &cy::LocalDocument::get_file_format_str)
 		.def("get_file_path", &cy::LocalDocument::get_file_path)
