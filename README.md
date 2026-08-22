@@ -28,6 +28,16 @@ Use CMake parameters to change the build type / installation prefix / etc.
 
 ## Testing
 
-`cd build`
+The tests are run by CTest. From the `build` directory:
 
-Run `run-tests.sh` to build and process the tests.
+`cmake .. && make && ctest`
+
+Use `ctest -R <regexp>` to filter the tests.
+
+The wrapper script builds the library and runs the tests in one step
+(from the `build` directory): `run-tests.sh`. The optional argument of
+the script is a regular expression to filter the tests.
+
+If the libcyberiadaml / libcyberiadamlpp libraries are installed into a
+non-standard prefix, set `LD_LIBRARY_PATH` accordingly before running
+`cmake` - the test environment captures it at configure time.
