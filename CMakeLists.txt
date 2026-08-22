@@ -3,9 +3,13 @@ cmake_minimum_required(VERSION 3.21)
 project(cyberiadamlpp-python VERSION 1.0)
 
 set (PYTHON_EXECUTABLE "/usr/bin/python3")
-set(cyberiadaml_DIR /usr/lib/cmake)
+if(NOT DEFINED cyberiadaml_DIR)
+  set(cyberiadaml_DIR /usr/lib/cmake)
+endif()
 find_package(cyberiadaml REQUIRED)
-set(cyberiadamlpp_DIR /usr/lib/cmake)
+if(NOT DEFINED cyberiadamlpp_DIR)
+  set(cyberiadamlpp_DIR /usr/lib/cmake)
+endif()
 find_package(cyberiadamlpp REQUIRED)
 
 if(!cyberiadamlpp_FOUND)
@@ -92,6 +96,43 @@ endforeach()
 file(COPY_FILE
   ${PROJECT_SOURCE_DIR}/run-tests.sh
   ${PROJECT_BINARY_DIR}/run-tests.sh ONLY_IF_DIFFERENT)
+
+
+enable_testing()
+
+option(MEMCHECK "Run the tests under valgrind memcheck" OFF)
+if(MEMCHECK)
+  find_program(VALGRIND valgrind REQUIRED)
+  set(MEMCHECK_COMMAND "${VALGRIND} --tool=memcheck -s --leak-check=full --error-exitcode=1")
+endif()
+
+file(GLOB test_scripts "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.py")
+foreach(script_path ${test_scripts})
+  get_filename_component(script_name "${script_path}" NAME)
+  get_filename_component(test_name "${script_path}" NAME_WE)
+  # the script path is relative to the build directory: the tests
+  # resolve their input/output files and print the paths via sys.argv[0]
+  string(SUBSTRING "${test_name}" 0 2 test_num)
+  set(test_args "-DBINARY=tests/${script_name}" "-DPYTHON=${Python3_EXECUTABLE}")
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/${script_name}-input.graphml" OR
+      EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/${test_num}-output.txt")
+    list(APPEND test_args "-DCAPTURE=1")
+  endif()
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/${test_num}-output.txt")
+    list(APPEND test_args "-DPATTERN_TXT=${CMAKE_CURRENT_SOURCE_DIR}/tests/${test_num}-output.txt")
+  endif()
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/${test_num}-output.graphml")
+    list(APPEND test_args "-DPATTERN_GRAPHML=${CMAKE_CURRENT_SOURCE_DIR}/tests/${test_num}-output.graphml")
+  endif()
+  if(MEMCHECK)
+    list(APPEND test_args "-DMEMCHECK=${MEMCHECK_COMMAND}")
+  endif()
+  add_test(NAME "${test_name}"
+    COMMAND ${CMAKE_COMMAND} ${test_args} -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/runtest.cmake")
+  set_tests_properties("${test_name}" PROPERTIES
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    ENVIRONMENT "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}")
+endforeach()
 
 configure_file ("${PROJECT_SOURCE_DIR}/CyberiadaMLPyPackOptions.cmake.in"
                 "${PROJECT_BINARY_DIR}/CyberiadaMLPyPackOptions.cmake"
