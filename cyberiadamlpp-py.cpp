@@ -449,8 +449,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def_readwrite("valid", &cy::Rect::valid)
 		.def_readwrite("x", &cy::Rect::x)
 		.def_readwrite("y", &cy::Rect::y)
-		.def_readwrite("x", &cy::Rect::width)
-		.def_readwrite("y", &cy::Rect::height)
+		.def_readwrite("width", &cy::Rect::width)
+		.def_readwrite("height", &cy::Rect::height)
 		.def("__repr__", &cy::Rect::to_str);
 
 	py::class_<cy::Polyline>(m, "Polyline")
@@ -487,7 +487,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_elements_count", &cy::Element::elements_count)
 		.def("get_id", &cy::Element::get_id)
 		.def("get_index", &cy::Element::index)
-		.def("get_formal_name", &cy::Element::get_name)
+		.def("get_formal_name", &cy::Element::get_formal_name)
 		.def("get_name", &cy::Element::get_name)
 		.def("get_parent", static_cast<const cy::Element* (cy::Element::*)() const>(&cy::Element::get_parent),
 			 py::return_value_policy::reference)
@@ -498,8 +498,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_type", &cy::Element::get_type)
 		.def("has_children", &cy::Element::has_children)
 		.def("has_geometry", &cy::Element::has_geometry)
-		.def("has_formal_name", &cy::Element::has_name)
-		.def("has_name", &cy::Element::has_formal_name)
+		.def("has_formal_name", &cy::Element::has_formal_name)
+		.def("has_name", &cy::Element::has_name)
 		.def("has_qualified_name", &cy::Element::has_qualified_name)
 		.def("is_root", &cy::Element::is_root)
 		.def("round_geometry", &cy::Element::round_geometry)
@@ -531,7 +531,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::return_value_policy::reference)
 		.def("get_geometry_source_point", &cy::CommentSubject::get_geometry_source_point,
 			 py::return_value_policy::reference)
-		.def("get_geometry_target_point", &cy::CommentSubject::get_geometry_source_point,
+		.def("get_geometry_target_point", &cy::CommentSubject::get_geometry_target_point,
 			 py::return_value_policy::reference)
 		.def("get_id", &cy::CommentSubject::get_id)
 		.def("get_type", &cy::CommentSubject::get_type)
@@ -539,7 +539,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_geometry", &cy::CommentSubject::has_geometry)
 		.def("has_geometry_polyline", &cy::CommentSubject::has_polyline)		
 		.def("has_geometry_source_point", &cy::CommentSubject::has_geometry_source_point)
-		.def("has_geometry_target_point", &cy::CommentSubject::has_geometry_source_point)
+		.def("has_geometry_target_point", &cy::CommentSubject::has_geometry_target_point)
 		.def("round_geometry", &cy::CommentSubject::round_geometry)
 		.def("__repr__", &cy::CommentSubject::to_str);
 
@@ -560,13 +560,13 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_bound_rect", &cy::Comment::get_bound_rect, py::return_value_policy::reference)
 		.def("get_color", &cy::Comment::get_color)
 		.def("get_geometry_rect", &cy::Comment::get_geometry_rect)
-		.def("get_markup", &cy::Comment::get_color)
+		.def("get_markup", &cy::Comment::get_markup)
 		.def("get_subjects", &cy::Comment::get_subjects, py::return_value_policy::reference)
 		.def("has_body", &cy::Comment::has_body)
 		.def("has_children", &cy::Comment::has_children)
 		.def("has_color", &cy::Comment::has_color)
 		.def("has_geometry", &cy::Comment::has_geometry)
-		.def("has_markup", &cy::Comment::has_color)
+		.def("has_markup", &cy::Comment::has_markup)
 		.def("has_subjects", &cy::Comment::has_subjects)
 		.def("is_human_readable", &cy::Comment::is_human_readable)
 		.def("is_machine_readable", &cy::Comment::is_machine_readable)
@@ -583,7 +583,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_geometry", &cy::Vertex::has_geometry)
 		.def("round_geometry", &cy::Vertex::round_geometry);
 	
-	py::class_<cy::Pseudostate, cy::Vertex, PyPseudostate>(m, "Pseidostate");
+	py::class_<cy::Pseudostate, cy::Vertex, PyPseudostate>(m, "Pseudostate");
 
 	py::class_<cy::InitialPseudostate, cy::Pseudostate, PyInitialPseudostate>(m, "Initial")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Point&>(),
@@ -739,7 +739,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_composite_state", &cy::State::is_composite_state)
 		.def("is_simple_state", &cy::State::is_simple_state)
 		.def("set_collapsed", &cy::State::set_collapsed)
-		.def("remove_element", &cy::State::add_element)
+		.def("remove_element", &cy::State::remove_element)
 		.def("compare_actions", &cy::State::compare_actions);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
