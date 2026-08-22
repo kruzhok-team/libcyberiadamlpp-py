@@ -27,7 +27,7 @@
 
 /* Replace the macro names for older versions of pybind11 */
 #if defined(PYBIND_MAJOR_VERSION) and PYBIND_MAJOR_VERSION >= 2
-  #if defined(PYBIND_MINOR_VERSION) and PYBIND_MINOR_VERSION < 5
+  #if PYBIND_MAJOR_VERSION == 2 and defined(PYBIND_MINOR_VERSION) and PYBIND_MINOR_VERSION < 5
     #define PYBIND11_OVERRIDE      PYBIND11_OVERLOAD
     #define PYBIND11_OVERRIDE_PURE PYBIND11_OVERLOAD_PURE
   #endif
