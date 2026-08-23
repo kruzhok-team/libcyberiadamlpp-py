@@ -580,7 +580,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_subjects", &cy::Comment::has_subjects)
 		.def("is_human_readable", &cy::Comment::is_human_readable)
 		.def("is_machine_readable", &cy::Comment::is_machine_readable)
-		.def("remove_subject", &cy::Comment::remove_subject)
+		.def("remove_subject", static_cast<void (cy::Comment::*)(cy::CommentSubjectType, const cy::String&)>(&cy::Comment::remove_subject))
+		.def("remove_subject", static_cast<void (cy::Comment::*)(size_t)>(&cy::Comment::remove_subject))
 		.def("round_geometry", &cy::Comment::round_geometry)
 		.def("set_body", &cy::Comment::set_body)
 		.def("update_geometry", &cy::Comment::update_geometry);
