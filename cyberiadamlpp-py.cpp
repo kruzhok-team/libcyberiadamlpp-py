@@ -618,7 +618,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_geometry_rect", &cy::ChoicePseudostate::get_geometry_rect, py::return_value_policy::reference)
 		.def("has_color", &cy::ChoicePseudostate::has_color)
 		.def("has_geometry", &cy::ChoicePseudostate::has_geometry)
-		.def("round_geometry", &cy::ChoicePseudostate::round_geometry);
+		.def("round_geometry", &cy::ChoicePseudostate::round_geometry)
+		.def("update_geometry", &cy::ChoicePseudostate::update_geometry);
 
 	py::class_<cy::TerminatePseudostate, cy::Pseudostate, PyTerminatePseudostate>(m, "Terminate")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Point&>(),
