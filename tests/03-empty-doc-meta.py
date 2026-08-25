@@ -38,8 +38,8 @@ try:
     d.get_meta().set_string("version", "0.1")
     d.get_meta().set_string("date", "2024-04-14T11:22:00")
     d.get_meta().set_string("markupLanguage", "html")
-    d.get_meta().transition_order_flag = True # exit first
-    d.get_meta().event_propagation_flag = True # propagate
+    d.get_meta().transition_order = CyberiadaML.transitionOrderExit
+    d.get_meta().event_propagation = CyberiadaML.docEventPropagationPropagate
     d.save_as(sys.argv[0] + ".graphml", CyberiadaML.formatCyberiada10, False)
 except Exception as e:
     print('Unexpected exception: {}'.format(e.__class__))

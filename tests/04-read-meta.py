@@ -41,15 +41,16 @@ try:
     assert d.get_meta().get_string("version") == "0.1"
     assert d.get_meta().get_string("date") == "2024-04-14T11:22:00"
     assert d.get_meta().get_string("markupLanguage") == "html"
-    assert d.get_meta().transition_order_flag  # exit first
-    assert d.get_meta().event_propagation_flag # propagate
+    assert d.get_meta().transition_order == CyberiadaML.transitionOrderExit
+    assert d.get_meta().event_propagation == CyberiadaML.docEventPropagationPropagate
     print(d)
     ld.open(sys.argv[0] + "-input2.graphml", CyberiadaML.formatCyberiada10,
             CyberiadaML.geometryFormatNone, False, False, True, True, True);
     d = CyberiadaML.Document(ld)
     assert d.get_meta().standard_version == "1.0"
-    assert not d.get_meta().transition_order_flag # default: transition first
-    assert not d.get_meta().event_propagation_flag # default: block events
+    # the skipped metainformation is replaced by the default one
+    assert d.get_meta().transition_order == CyberiadaML.transitionOrderAction
+    assert d.get_meta().event_propagation == CyberiadaML.docEventPropagationBlock
     print(d)
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))

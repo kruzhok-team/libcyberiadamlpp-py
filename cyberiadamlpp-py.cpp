@@ -954,14 +954,26 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_transitions", static_cast<std::vector<const cy::Transition*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_transitions))
 		.def("get_transitions", static_cast<std::vector<cy::Transition*> (cy::StateMachine::*)()>(&cy::StateMachine::get_transitions));
 
+	py::enum_<cy::DocumentTransitionOrder>(m, "DocumentTransitionOrder")
+		.value("transitionOrderNone", cy::DocumentTransitionOrder::transitionOrderNone)
+		.value("transitionOrderAction", cy::DocumentTransitionOrder::transitionOrderAction)
+		.value("transitionOrderExit", cy::DocumentTransitionOrder::transitionOrderExit)
+		.export_values();
+
+	py::enum_<cy::DocumentEventPropagation>(m, "DocumentEventPropagation")
+		.value("docEventPropagationNone", cy::DocumentEventPropagation::docEventPropagationNone)
+		.value("docEventPropagationBlock", cy::DocumentEventPropagation::docEventPropagationBlock)
+		.value("docEventPropagationPropagate", cy::DocumentEventPropagation::docEventPropagationPropagate)
+		.export_values();
+
 	py::class_<cy::DocumentMetainformation>(m, "DocumentMetainformation")
 		.def(py::init<>())
 		.def_readwrite("standard_version", &cy::DocumentMetainformation::standard_version)
 		.def_readwrite("strings", &cy::DocumentMetainformation::strings)
 		.def("get_string", &cy::DocumentMetainformation::get_string)
 		.def("set_string", &cy::DocumentMetainformation::set_string)
-		.def_readwrite("transition_order_flag", &cy::DocumentMetainformation::transition_order_flag)
-		.def_readwrite("event_propagation_flag", &cy::DocumentMetainformation::event_propagation_flag);
+		.def_readwrite("transition_order", &cy::DocumentMetainformation::transition_order)
+		.def_readwrite("event_propagation", &cy::DocumentMetainformation::event_propagation);
 
 	py::class_<cy::Document, cy::ElementCollection, PyDocument>(m, "Document")
         .def(py::init<cy::DocumentGeometryFormat>(), py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone)
@@ -1007,7 +1019,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("decode", &cy::Document::decode,
 			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
 		.def("encode", &cy::Document::encode, py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
 		.def("encode", [](cy::Document& d, cy::DocumentFormat f, bool round) {
 						   cy::String buffer;
@@ -1017,15 +1029,15 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
 		.def("decode", [](cy::Document& d, const cy::String& buffer, cy::DocumentFormat f, cy::DocumentGeometryFormat gf,
 						  bool reconstruct, bool reconstruct_sm, bool skip_empty_actions,
-						  bool simplify_ids, bool skip_meta_format) {
+						  bool simplify_ids, bool skip_meta_format, bool strict) {
 						   cy::String format_str;
 						   d.decode(buffer, f, format_str, gf, reconstruct, reconstruct_sm,
-									skip_empty_actions, simplify_ids, skip_meta_format);
+									skip_empty_actions, simplify_ids, skip_meta_format, strict);
 						   return py::make_tuple(f, format_str);
 					   },
 			 py::arg("buffer"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)() const>(&cy::Document::get_bound_rect))
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)(const cy::Document&) const>(&cy::Document::get_bound_rect))
 		.def("get_geometry_format", &cy::Document::get_geometry_format)
@@ -1179,7 +1191,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("open", &cy::LocalDocument::open,
 			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false)
+			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
 		.def("reset", &cy::LocalDocument::reset)
 		.def("save", &cy::LocalDocument::save, "Save the previously opened document", py::arg("round") = false)
 		.def("save_as", &cy::LocalDocument::save_as,
