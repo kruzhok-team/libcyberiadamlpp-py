@@ -423,6 +423,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::enum_<cy::DocumentFormat>(m, "DocumentFormat")
 		.value("formatCyberiada10", cy::DocumentFormat::formatCyberiada10) 
 		.value("formatLegacyYED", cy::DocumentFormat::formatLegacyYED) 
+		.value("formatLegacyYEDOstranna", cy::DocumentFormat::formatLegacyYEDOstranna) 
+		.value("formatLegacyYEDBerloga16", cy::DocumentFormat::formatLegacyYEDBerloga16) 
 		.value("formatDetect", cy::DocumentFormat::formatDetect)
 		.export_values();
 
@@ -1020,13 +1022,20 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
 			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
-		.def("encode", &cy::Document::encode, py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
-		.def("encode", [](cy::Document& d, cy::DocumentFormat f, bool round) {
+		.def("encode", &cy::Document::encode,
+			 py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false,
+			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
+			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false)
+		.def("encode", [](cy::Document& d, cy::DocumentFormat f, bool round, bool skip_geometry,
+						  bool check_initial, bool strict_actions, bool skip_empty_behavior) {
 						   cy::String buffer;
-						   d.encode(buffer, f, round);
+						   d.encode(buffer, f, round, skip_geometry, check_initial,
+									strict_actions, skip_empty_behavior);
 						   return buffer;
 					   },
-			 py::arg("f") = cy::formatCyberiada10, py::arg("round") = false)
+			 py::arg("f") = cy::formatCyberiada10, py::arg("round") = false,
+			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
+			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false)
 		.def("decode", [](cy::Document& d, const cy::String& buffer, cy::DocumentFormat f, cy::DocumentGeometryFormat gf,
 						  bool reconstruct, bool reconstruct_sm, bool skip_empty_actions,
 						  bool simplify_ids, bool skip_meta_format, bool strict) {
@@ -1193,9 +1202,14 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
 			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
 		.def("reset", &cy::LocalDocument::reset)
-		.def("save", &cy::LocalDocument::save, "Save the previously opened document", py::arg("round") = false)
+		.def("save", &cy::LocalDocument::save, "Save the previously opened document",
+			 py::arg("round") = false,
+			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
+			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false)
 		.def("save_as", &cy::LocalDocument::save_as,
-			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("round") = false);
+			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("round") = false,
+			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
+			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false);
 
 /*	py::class_<cy::Exception>(m, "Exception")
 		.def("str", &cy::Exception::str)
@@ -1227,6 +1241,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::bind_vector<std::vector<cy::StateMachine*>>(m, "StateMachinesRefList");
 	
 	m.def("cleanup_library", &cy::cleanup_library);
+	m.def("is_legacy_yed_format", &cy::is_legacy_yed_format, py::arg("f"));
 
 	py::register_exception<cy::Exception>(m, "Exception");
 	py::register_exception<cy::FileException>(m, "FileException");
