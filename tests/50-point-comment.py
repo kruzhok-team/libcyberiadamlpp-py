@@ -26,12 +26,11 @@ import CyberiadaML
 
 try:
     # the strict load rejects the comment with point geometry
-    # (the geometry check is reported as the action format error)
     try:
         bad = CyberiadaML.LocalDocument()
         bad.open(sys.argv[0] + "-input.graphml")
         exit(1)
-    except CyberiadaML.ActionException:
+    except CyberiadaML.CybMLException:
         pass
 
     # the reconstruction mode repairs the malformed geometry
