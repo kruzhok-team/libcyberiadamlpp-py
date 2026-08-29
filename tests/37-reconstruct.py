@@ -38,6 +38,18 @@ try:
            CyberiadaML.geometryFormatQt, True, True)
     p.round_geometry()
     print(p)
+
+    # the metainformation node is not displayed (6.9): the reconstruction
+    # leaves it and the comment edge it carries out of the geometry
+    m = CyberiadaML.LocalDocument()
+    m.open(sys.argv[0] + "-input2.graphml")
+    m.reconstruct_geometry(True)
+    m.round_geometry()
+    meta = m.find_element_by_id("nMeta")
+    assert meta and meta.get_type() == CyberiadaML.elementFormalComment
+    assert not meta.has_geometry()
+    assert m.find_element_by_id("n0").has_geometry()
+    print(CyberiadaML.Document(m))
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))
