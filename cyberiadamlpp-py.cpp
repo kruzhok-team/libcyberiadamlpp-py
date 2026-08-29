@@ -968,12 +968,22 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("docEventPropagationPropagate", cy::DocumentEventPropagation::docEventPropagationPropagate)
 		.export_values();
 
+	py::enum_<cy::DocumentGeometryDeclaration>(m, "DocumentGeometryDeclaration")
+		.value("geometryDeclarationAbsent", cy::DocumentGeometryDeclaration::geometryDeclarationAbsent)
+		.value("geometryDeclarationNone", cy::DocumentGeometryDeclaration::geometryDeclarationNone)
+		.value("geometryDeclarationShort", cy::DocumentGeometryDeclaration::geometryDeclarationShort)
+		.value("geometryDeclarationFull", cy::DocumentGeometryDeclaration::geometryDeclarationFull)
+		.export_values();
+
 	py::class_<cy::DocumentMetainformation>(m, "DocumentMetainformation")
 		.def(py::init<>())
 		.def_readwrite("standard_version", &cy::DocumentMetainformation::standard_version)
 		.def_readwrite("strings", &cy::DocumentMetainformation::strings)
 		.def("get_string", &cy::DocumentMetainformation::get_string)
 		.def("set_string", &cy::DocumentMetainformation::set_string)
+		.def("remove_string", &cy::DocumentMetainformation::remove_string)
+		.def("get_geometry", &cy::DocumentMetainformation::get_geometry)
+		.def("set_geometry", &cy::DocumentMetainformation::set_geometry)
 		.def_readwrite("transition_order", &cy::DocumentMetainformation::transition_order)
 		.def_readwrite("event_propagation", &cy::DocumentMetainformation::event_propagation);
 
