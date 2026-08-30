@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(cyberiadamlpp-python VERSION 1.0)
+project(cyberiadamlpp-python VERSION 1.0.6)
 
 if(NOT DEFINED cyberiadaml_DIR)
   set(cyberiadaml_DIR /usr/lib/cmake)
@@ -35,6 +35,7 @@ list(GET pybind11_VERSION_list 1 PYBIND_MINOR_VERSION)
 add_compile_definitions(
   PYBIND_MAJOR_VERSION=${PYBIND_MAJOR_VERSION}
   PYBIND_MINOR_VERSION=${PYBIND_MINOR_VERSION}
+  CYBERIADA_ML_PY_LIB_VERSION="${PROJECT_VERSION}"
 )
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D__DEBUG__")

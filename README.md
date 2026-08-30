@@ -12,9 +12,10 @@ the GNU Free Documentation License (version 1.3).
 
 ## Requirements
 
-* libcyberidamlpp (and its dependencies)
+* libcyberiadamlpp (version 1.0.6+, and its dependencies)
 * cmake (version 3.21+)
 * pybind11
+* python3 (version 3.8+)
 
 ## Installation
 
@@ -23,6 +24,9 @@ Create `build` directory: `mkdir build && cd build`
 Run `cmake ..` to build the library binaries and the test program.
 
 Run `make install` to install the library.
+
+Run `cpack -G DEB` to build the Debian package: `python3-libcyberiadamlpp`
+with the Python module.
 
 Use CMake parameters to change the build type / installation prefix / etc.
 

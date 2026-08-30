@@ -398,6 +398,7 @@ static std::unique_ptr<cy::Polyline> polyline_from_list(const py::list& points)
 
 PYBIND11_MODULE(CyberiadaML, m) {
     m.doc() = "Cyberiada GraphML C++ Library Binding"; // optional module docstring
+    m.attr("__version__") = CYBERIADA_ML_PY_LIB_VERSION;
 
 	py::enum_<cy::ElementType>(m, "ElementType")
 		.value("elementRoot", cy::ElementType::elementRoot)
