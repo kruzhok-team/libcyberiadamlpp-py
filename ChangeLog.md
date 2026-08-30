@@ -10,8 +10,6 @@ Added:
 - the export options and the yEd dialects on saving;
 - the declared geometry format of the document;
 - the strict standard checks and the metainformation parameter enums;
-- the graph identifiers simplification;
-- the module version attribute;
 - the ctest-based test suite.
 
 Fixed:
