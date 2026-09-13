@@ -1066,14 +1066,6 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("clean_geometry", &cy::Document::clean_geometry)
 		.def("convert_geometry", &cy::Document::convert_geometry)
 		.def("copy", &cy::Document::copy, py::return_value_policy::take_ownership)
-		.def("decode", &cy::Document::decode,
-			 py::arg("buffer"), py::arg("format"), py::arg("format_str"), py::arg("gf") = cy::geometryFormatQt,
-			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
-			 py::arg("simplify_ids") = false, py::arg("skip_meta_format") = false, py::arg("strict") = false)
-		.def("encode", &cy::Document::encode,
-			 py::arg("buffer"), py::arg("f") = cy::formatCyberiada10, py::arg("round") = false,
-			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
-			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false)
 		.def("encode", [](cy::Document& d, cy::DocumentFormat f, bool round, bool skip_geometry,
 						  bool check_initial, bool strict_actions, bool skip_empty_behavior) {
 						   cy::String buffer;

@@ -44,7 +44,7 @@ try:
     # decoding a non-XML buffer
     try:
         d = CyberiadaML.Document()
-        d.decode("not an xml buffer", CyberiadaML.formatDetect, "")
+        d.decode("not an xml buffer")
         exit(1)
     except CyberiadaML.XMLException:
         pass
@@ -52,7 +52,7 @@ try:
     # decoding an empty buffer
     try:
         d = CyberiadaML.Document()
-        d.decode("", CyberiadaML.formatDetect, "")
+        d.decode("")
         exit(1)
     except CyberiadaML.ParametersException:
         pass
@@ -61,7 +61,7 @@ try:
     try:
         d = CyberiadaML.Document()
         d.new_state_machine("SM")
-        d.encode("", CyberiadaML.formatDetect)
+        d.encode(CyberiadaML.formatDetect)
         exit(1)
     except CyberiadaML.ParametersException:
         pass
@@ -71,10 +71,27 @@ try:
         d = CyberiadaML.Document()
         d.new_state_machine("SM 1")
         d.new_state_machine("SM 2")
-        d.encode("", CyberiadaML.formatLegacyYED)
+        d.encode(CyberiadaML.formatLegacyYED)
         exit(1)
     except CyberiadaML.ParametersException:
         pass
+
+    # the results are returned: the format constants are not written back
+    d = CyberiadaML.Document()
+    d.new_state_machine("SM")
+    d2 = CyberiadaML.Document()
+    assert (d2.decode(d.encode(), CyberiadaML.formatDetect) ==
+            (CyberiadaML.formatCyberiada10, "Cyberiada-GraphML-1.0"))
+    assert int(CyberiadaML.formatDetect) == 99
+
+    # the out-parameter forms are not bound
+    for call in (lambda: d2.decode(d.encode(), CyberiadaML.formatDetect, ""),
+                 lambda: d2.encode("")):
+        try:
+            call()
+            exit(1)
+        except TypeError:
+            pass
 except CyberiadaML.Exception as e:
     sys.stderr.write('Unexpected CyberiadaML exception: {}\n'.format(e.__class__))
     sys.stderr.write('{}\n'.format(traceback.format_exc()))
