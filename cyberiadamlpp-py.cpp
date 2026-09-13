@@ -396,6 +396,40 @@ static std::unique_ptr<cy::Polyline> polyline_from_list(const py::list& points)
 	return std::make_unique<cy::Polyline>(v);
 }
 
+/* The collection deletes the added element, so the Python instance that owned
+   it (a copy or an element constructed in Python) keeps only a reference */
+static void release_python_ownership(py::handle h)
+{
+	py::detail::instance* inst = reinterpret_cast<py::detail::instance*>(h.ptr());
+	for (auto& v_h : py::detail::values_and_holders(inst)) {
+		if (v_h && v_h.holder_constructed()) {
+			v_h.holder<std::unique_ptr<cy::Element>>().release();
+			v_h.set_holder_constructed(false);
+		}
+	}
+	inst->owned = false;
+}
+
+static cy::Element* element_from_handle(py::handle h)
+{
+	if (!h.is_none() && !py::isinstance<cy::Element>(h)) {
+		throw py::type_error("an Element is expected");
+	}
+	return h.cast<cy::Element*>();
+}
+
+static void collection_add_element(cy::ElementCollection& collection, py::handle element)
+{
+	collection.add_element(element_from_handle(element));
+	release_python_ownership(element);
+}
+
+static void collection_add_first_element(cy::ElementCollection& collection, py::handle element)
+{
+	collection.add_first_element(element_from_handle(element));
+	release_python_ownership(element);
+}
+
 PYBIND11_MODULE(CyberiadaML, m) {
     m.doc() = "Cyberiada GraphML C++ Library Binding"; // optional module docstring
     m.attr("__version__") = CYBERIADA_ML_PY_LIB_VERSION;
@@ -685,8 +719,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&>(),
 			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("name"),
 			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color())
-		.def("add_element", &cy::ElementCollection::add_element)
-		.def("add_first_element", &cy::ElementCollection::add_first_element)
+		.def("add_element", &collection_add_element, py::arg("element"))
+		.def("add_first_element", &collection_add_first_element, py::arg("element"))
 		.def("children_count", &cy::ElementCollection::children_count)
 		.def("clean_geometry", &cy::ElementCollection::clean_geometry)
 		.def("clear", &cy::ElementCollection::clear)
@@ -761,7 +795,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("rect") = cy::Rect(),
 			 py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("add_action", &cy::State::add_action)
-		.def("add_element", &cy::State::add_element)
+		.def("add_element", &collection_add_element, py::arg("element"))
 		.def("copy", &cy::State::copy, py::return_value_policy::take_ownership)
 		.def("get_actions", static_cast<const std::vector<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
 		.def("get_actions", static_cast<std::vector<cy::Action>& (cy::State::*)()>(&cy::State::get_actions))
