@@ -619,6 +619,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_machine_readable", &cy::Comment::is_machine_readable)
 		.def("remove_subject", static_cast<void (cy::Comment::*)(cy::CommentSubjectType, const cy::String&)>(&cy::Comment::remove_subject))
 		.def("remove_subject", static_cast<void (cy::Comment::*)(size_t)>(&cy::Comment::remove_subject))
+		.def("rebind_subjects", &cy::Comment::rebind_subjects, py::arg("root"))
 		.def("round_geometry", &cy::Comment::round_geometry)
 		.def("set_body", &cy::Comment::set_body)
 		.def("update_geometry", &cy::Comment::update_geometry);
@@ -787,6 +788,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_initial", &cy::ElementCollection::has_initial)
 		.def("has_qualified_name", &cy::ElementCollection::has_qualified_name)
 		.def("remove_element", &cy::ElementCollection::remove_element)
+		.def("rebind_subjects", &cy::ElementCollection::rebind_subjects, py::arg("root"))
 		.def("round_geometry", &cy::ElementCollection::round_geometry)
 		.def("update_geometry", &cy::ElementCollection::update_geometry);
 
@@ -845,6 +847,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("update", static_cast<void (cy::Transition::*)(const cy::Point&, const cy::Point&)>(&cy::Transition::update))
 		.def("update", static_cast<void (cy::Transition::*)(const cy::Polyline&)>(&cy::Transition::update))
 		.def("update", static_cast<void (cy::Transition::*)(const cy::ID&, const cy::ID&)>(&cy::Transition::update))
+		.def("update_label", &cy::Transition::update_label, py::arg("label_point"))
 		.def("compare_actions", &cy::Transition::compare_actions);
 
 	m.attr("smiIdentical") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIdentical));
@@ -1095,6 +1098,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)() const>(&cy::Document::get_bound_rect))
 		.def("get_bound_rect", static_cast<cy::Rect (cy::Document::*)(const cy::Document&) const>(&cy::Document::get_bound_rect))
 		.def("get_geometry_format", &cy::Document::get_geometry_format)
+		.def("set_geometry", &cy::Document::set_geometry, py::arg("format"))
 		.def("get_meta", static_cast<const cy::DocumentMetainformation& (cy::Document::*)() const>(&cy::Document::meta),
 			 py::return_value_policy::reference)
 		.def("get_meta", static_cast<cy::DocumentMetainformation& (cy::Document::*)()>(&cy::Document::meta),
@@ -1242,6 +1246,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_file_format", &cy::LocalDocument::get_file_format)
 		.def("get_file_format_str", &cy::LocalDocument::get_file_format_str)
 		.def("get_file_path", &cy::LocalDocument::get_file_path)
+		.def("set_file", &cy::LocalDocument::set_file, py::arg("path"), py::arg("f"))
 		.def("open", &cy::LocalDocument::open,
 			 py::arg("path"), py::arg("f") = cy::formatDetect, py::arg("gf") = cy::geometryFormatQt,
 			 py::arg("reconstruct") = false, py::arg("reconstruct_sm") = false, py::arg("skip_empty_actions") = false,
