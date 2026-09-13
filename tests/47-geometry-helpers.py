@@ -99,11 +99,14 @@ try:
     assert (repr(CyberiadaML.Action("EV", "", "b();", CyberiadaML.eventPropagationDefer)) ==
             "trigger: 'EV', propagation: 'defer', behavior: 'b();'")
 
-    # the transition action update requires a trigger
+    # a transition action may be updated to guard-only or behaviour-only
+    # (a choice branch, an initial/completion edge); only a fully empty
+    # update is refused
     tr = CyberiadaML.Action("EVENT", "", "b();")
     tr.update("", "g", "c();")
-    assert tr.get_trigger() == "EVENT"
-    assert tr.get_behavior() == "b();"
+    assert tr.get_trigger() == "" and tr.get_guard() == "g" and tr.get_behavior() == "c();"
+    tr.update("", "", "")
+    assert tr.get_behavior() == "c();"
 
     # guards are not allowed in the entry/exit activities
     d = CyberiadaML.Document(CyberiadaML.geometryFormatQt)
