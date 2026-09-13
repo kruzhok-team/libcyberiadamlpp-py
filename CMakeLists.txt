@@ -2,27 +2,27 @@ cmake_minimum_required(VERSION 3.21)
 
 project(cyberiadamlpp-python VERSION 1.0.6)
 
-if(NOT DEFINED cyberiadaml_DIR)
+if(NOT DEFINED cyberiadaml_DIR AND UNIX)
   set(cyberiadaml_DIR /usr/lib/cmake)
 endif()
 find_package(cyberiadaml REQUIRED)
-if(NOT DEFINED cyberiadamlpp_DIR)
+if(NOT DEFINED cyberiadamlpp_DIR AND UNIX)
   set(cyberiadamlpp_DIR /usr/lib/cmake)
 endif()
 find_package(cyberiadamlpp REQUIRED)
 
-if(!cyberiadamlpp_FOUND)
+if(NOT cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
 find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
-if(!pybind11_FOUND)
+if(NOT pybind11_FOUND)
   message(FATAL_ERROR "Cannot find pybind11 library")
 endif()
 
-if(!Python3_FOUND)
+if(NOT Python3_FOUND)
   message(FATAL_ERROR "Cannot find python3")
 endif()
 
@@ -38,25 +38,38 @@ add_compile_definitions(
   CYBERIADA_ML_PY_LIB_VERSION="${PROJECT_VERSION}"
 )
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D__DEBUG__")
+add_compile_definitions($<$<CONFIG:Debug>:__DEBUG__>)
+
+if(MSVC)
+  add_compile_options(/W4)
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(CyberiadaML MODULE cyberiadamlpp-py.cpp)
 set_target_properties(CyberiadaML PROPERTIES PREFIX "")
+if(WIN32)
+  # python imports the extension modules by the .pyd suffix only
+  set_target_properties(CyberiadaML PROPERTIES SUFFIX ".pyd")
+endif()
 install(TARGETS CyberiadaML DESTINATION ${Python3_SITELIB})
 
-if (WIN32)
+# the tests import the module from their own directory
+add_custom_command(TARGET CyberiadaML
+  POST_BUILD
+  COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+          "$<TARGET_FILE:CyberiadaML>"
+          "${PROJECT_BINARY_DIR}/tests/"
+  )
+if(WIN32)
   add_custom_command(TARGET CyberiadaML
     POST_BUILD
-    COMMAND copy "$<TARGET_FILE:CyberiadaML>" "${PROJECT_BINARY_DIR}/tests/"
-  )
-else()
-  add_custom_command(TARGET CyberiadaML
-    POST_BUILD
-    COMMAND ln -sf "$<TARGET_FILE:CyberiadaML>" "${PROJECT_BINARY_DIR}/tests/"
-  )
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            "$<TARGET_RUNTIME_DLLS:CyberiadaML>"
+            "${PROJECT_BINARY_DIR}/tests/"
+    COMMAND_EXPAND_LISTS
+    )
 endif()
 
 target_include_directories(CyberiadaML PUBLIC
