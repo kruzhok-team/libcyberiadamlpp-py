@@ -2,13 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(cyberiadamlpp-python VERSION 1.0.6)
 
-if(NOT DEFINED cyberiadaml_DIR AND UNIX)
-  set(cyberiadaml_DIR /usr/lib/cmake)
-endif()
 find_package(cyberiadaml REQUIRED)
-if(NOT DEFINED cyberiadamlpp_DIR AND UNIX)
-  set(cyberiadamlpp_DIR /usr/lib/cmake)
-endif()
 find_package(cyberiadamlpp REQUIRED)
 
 if(NOT cyberiadamlpp_FOUND)
