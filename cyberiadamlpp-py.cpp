@@ -205,6 +205,15 @@ public:
 	}
 };
 
+class PyHistoryPseudostate: public cy::HistoryPseudostate {
+public:
+	using cy::HistoryPseudostate::HistoryPseudostate;
+
+	cy::Element* copy(cy::Element* parent) const override {
+		PYBIND11_OVERRIDE(cy::Element*, cy::HistoryPseudostate, copy, parent);
+	}
+};
+
 class PyFinalState: public cy::FinalState {
 public:
 	using cy::FinalState::FinalState;
@@ -446,6 +455,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("elementChoice", cy::ElementType::elementChoice)
 		.value("elementTerminate", cy::ElementType::elementTerminate)
 		.value("elementTransition", cy::ElementType::elementTransition)
+		.value("elementShallowHistory", cy::ElementType::elementShallowHistory)
+		.value("elementDeepHistory", cy::ElementType::elementDeepHistory)
 		.export_values();
 
 	py::enum_<cy::TransitionType>(m, "TransitionType")
@@ -472,7 +483,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Point>(m, "Point")
 		.def(py::init<>())
-		.def(py::init<float, float>())
+		.def(py::init<double, double>())
 		.def_readwrite("valid", &cy::Point::valid)
 		.def_readwrite("x", &cy::Point::x)
 		.def_readwrite("y", &cy::Point::y)
@@ -481,7 +492,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 
 	py::class_<cy::Rect>(m, "Rect")
 		.def(py::init<>())
-		.def(py::init<float, float, float, float>())
+		.def(py::init<double, double, double, double>())
 		.def(py::self == py::self)
 		.def(py::self != py::self)
 		.def_readwrite("valid", &cy::Rect::valid)
@@ -665,6 +676,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point())
 		.def("copy", &cy::TerminatePseudostate::copy, py::return_value_policy::take_ownership);
+
+	py::class_<cy::HistoryPseudostate, cy::Pseudostate, PyHistoryPseudostate>(m, "History")
+		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Point&, const cy::Color&>(),
+			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color())
+		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Name&, const cy::Point&,
+			 const cy::Color&>(),
+			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("name"),
+			 py::arg("point") = cy::Point(), py::arg("color") = cy::Color())
+		.def("copy", &cy::HistoryPseudostate::copy, py::return_value_policy::take_ownership);
 
 	py::class_<cy::FinalState, cy::Vertex, PyFinalState>(m, "Final")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Point&>(),
@@ -1173,6 +1194,30 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_initial", static_cast<cy::InitialPseudostate*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_initial),
+			 py::arg("parent"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_shallow_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_shallow_history),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_shallow_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_shallow_history),
+			 py::arg("parent"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_shallow_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_shallow_history),
+			 py::arg("parent"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_deep_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_deep_history),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_deep_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_deep_history),
+			 py::arg("parent"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_deep_history", static_cast<cy::HistoryPseudostate*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_deep_history),
 			 py::arg("parent"), py::arg("point") = cy::Point(),
 			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_state", static_cast<cy::State*
