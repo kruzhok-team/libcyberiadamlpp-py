@@ -847,7 +847,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("update", static_cast<void (cy::Transition::*)(const cy::Point&, const cy::Point&)>(&cy::Transition::update))
 		.def("update", static_cast<void (cy::Transition::*)(const cy::Polyline&)>(&cy::Transition::update))
 		.def("update", static_cast<void (cy::Transition::*)(const cy::ID&, const cy::ID&)>(&cy::Transition::update))
-		.def("update_label", &cy::Transition::update_label, py::arg("label_point"))
+		.def("update_label", static_cast<void (cy::Transition::*)(const cy::Point&)>(&cy::Transition::update_label), py::arg("label_point"))
+		.def("update_label", static_cast<void (cy::Transition::*)(const cy::Rect&)>(&cy::Transition::update_label), py::arg("label_rect"))
 		.def("compare_actions", &cy::Transition::compare_actions);
 
 	m.attr("smiIdentical") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismTypes::smiIdentical));
@@ -1133,17 +1134,17 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(), py::arg("markup") = cy::String(),
 			 py::return_value_policy::reference)
 		.def("new_final", static_cast<cy::FinalState*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&)>(&cy::Document::new_final),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_final),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_final", static_cast<cy::FinalState*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&)>(&cy::Document::new_final),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&, const cy::Color&)>(&cy::Document::new_final),
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_final", static_cast<cy::FinalState*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&)>(&cy::Document::new_final),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_final),
 			 py::arg("parent"), py::arg("point") = cy::Point(),			 
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_formal_comment", static_cast<cy::Comment*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::String&, const cy::String&, const cy::Rect&, const cy::Color&,
 							   const cy::String& )>(&cy::Document::new_formal_comment),
@@ -1163,17 +1164,17 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(), py::arg("markup") = cy::String(),
 			 py::return_value_policy::reference)
 		.def("new_initial", static_cast<cy::InitialPseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&)>(&cy::Document::new_initial),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_initial),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_initial", static_cast<cy::InitialPseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&)>(&cy::Document::new_initial),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&, const cy::Color&)>(&cy::Document::new_initial),
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_initial", static_cast<cy::InitialPseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&)>(&cy::Document::new_initial),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_initial),
 			 py::arg("parent"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_state", static_cast<cy::State*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::String&, const cy::Action&,
 							   const cy::Rect&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_state),
@@ -1194,17 +1195,17 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("sm_name"), py::arg("rect") = cy::Rect(),
 			 py::return_value_policy::reference)
 		.def("new_terminate", static_cast<cy::TerminatePseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&)>(&cy::Document::new_terminate),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_terminate),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_terminate", static_cast<cy::TerminatePseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&)>(&cy::Document::new_terminate),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Point&, const cy::Color&)>(&cy::Document::new_terminate),
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_terminate", static_cast<cy::TerminatePseudostate*
-			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&)>(&cy::Document::new_terminate),
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_terminate),
 			 py::arg("parent"), py::arg("point") = cy::Point(),
-			 py::return_value_policy::reference)
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_transition", static_cast<cy::Transition*
 			 (cy::Document::*)(cy::StateMachine*, cy::TransitionType, const cy::ID&, cy::Element*, cy::Element*, const cy::Action&,
 							   const cy::Polyline&, const cy::Point&, const cy::Point&, const cy::Point&, const cy::Rect&,
