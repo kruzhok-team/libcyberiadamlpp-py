@@ -332,6 +332,12 @@ class PySubmachineState: public cy::SubmachineState {
 public:
 	using cy::SubmachineState::SubmachineState;
 
+	void add_element(cy::Element* e) override {
+		PYBIND11_OVERRIDE(void, cy::SubmachineState, add_element, e);
+	}
+	void remove_element(const cy::ID& id) override {
+		PYBIND11_OVERRIDE(void, cy::SubmachineState, remove_element, id);
+	}
 	cy::Element* copy(cy::Element* parent) const override {
 		PYBIND11_OVERRIDE(cy::Element*, cy::SubmachineState, copy, parent);
 	}
@@ -877,7 +883,6 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("is_submachine_state", &cy::SubmachineState::is_submachine_state)
 		.def("get_submachine_reference", &cy::SubmachineState::get_submachine_reference)
 		.def("set_submachine_reference", &cy::SubmachineState::set_submachine_reference, py::arg("reference"))
-		.def("add_element", &collection_add_element, py::arg("element"))
 		.def("copy", &cy::SubmachineState::copy, py::return_value_policy::take_ownership);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
