@@ -214,6 +214,15 @@ public:
 	}
 };
 
+class PyConnectionPoint: public cy::ConnectionPoint {
+public:
+	using cy::ConnectionPoint::ConnectionPoint;
+
+	cy::Element* copy(cy::Element* parent) const override {
+		PYBIND11_OVERRIDE(cy::Element*, cy::ConnectionPoint, copy, parent);
+	}
+};
+
 class PyFinalState: public cy::FinalState {
 public:
 	using cy::FinalState::FinalState;
@@ -316,6 +325,19 @@ public:
 protected:
 	std::ostream& dump(std::ostream& os) const override {
 		PYBIND11_OVERRIDE(std::ostream&, cy::State, dump, os);
+	}
+};
+
+class PySubmachineState: public cy::SubmachineState {
+public:
+	using cy::SubmachineState::SubmachineState;
+
+	cy::Element* copy(cy::Element* parent) const override {
+		PYBIND11_OVERRIDE(cy::Element*, cy::SubmachineState, copy, parent);
+	}
+protected:
+	std::ostream& dump(std::ostream& os) const override {
+		PYBIND11_OVERRIDE(std::ostream&, cy::SubmachineState, dump, os);
 	}
 };
 
@@ -457,6 +479,9 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("elementTransition", cy::ElementType::elementTransition)
 		.value("elementShallowHistory", cy::ElementType::elementShallowHistory)
 		.value("elementDeepHistory", cy::ElementType::elementDeepHistory)
+		.value("elementSubmachineState", cy::ElementType::elementSubmachineState)
+		.value("elementEntryPoint", cy::ElementType::elementEntryPoint)
+		.value("elementExitPoint", cy::ElementType::elementExitPoint)
 		.export_values();
 
 	py::enum_<cy::TransitionType>(m, "TransitionType")
@@ -687,6 +712,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("point") = cy::Point(), py::arg("color") = cy::Color())
 		.def("copy", &cy::HistoryPseudostate::copy, py::return_value_policy::take_ownership);
 
+	py::class_<cy::ConnectionPoint, cy::Pseudostate, PyConnectionPoint>(m, "ConnectionPoint")
+		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Point&, const cy::Color&>(),
+			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color())
+		.def(py::init<cy::Element*, cy::ElementType, const cy::ID&, const cy::Name&, const cy::Point&,
+			 const cy::Color&>(),
+			 py::arg("parent"), py::arg("type"), py::arg("id"), py::arg("name"),
+			 py::arg("point") = cy::Point(), py::arg("color") = cy::Color())
+		.def("copy", &cy::ConnectionPoint::copy, py::return_value_policy::take_ownership);
+
 	py::class_<cy::FinalState, cy::Vertex, PyFinalState>(m, "Final")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Point&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("point") = cy::Point())
@@ -834,6 +869,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("update_region_geometry_rect", &cy::State::update_region_geometry_rect)
 		.def("remove_element", &cy::State::remove_element)
 		.def("compare_actions", &cy::State::compare_actions);
+
+	py::class_<cy::SubmachineState, cy::ElementCollection, PySubmachineState>(m, "SubmachineState")
+		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::ID&, const cy::Rect&, const cy::Color&>(),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("reference"),
+			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color())
+		.def("is_submachine_state", &cy::SubmachineState::is_submachine_state)
+		.def("get_submachine_reference", &cy::SubmachineState::get_submachine_reference)
+		.def("set_submachine_reference", &cy::SubmachineState::set_submachine_reference, py::arg("reference"))
+		.def("add_element", &collection_add_element, py::arg("element"))
+		.def("copy", &cy::SubmachineState::copy, py::return_value_policy::take_ownership);
 
 	py::class_<cy::Transition, cy::Element, PyTransition>(m, "Transition")
 		.def(py::init<cy::Element*, cy::TransitionType, const cy::ID&, const cy::ID&, const cy::ID&, const cy::Action&,
@@ -1218,6 +1263,38 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_deep_history", static_cast<cy::HistoryPseudostate*
 			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_deep_history),
+			 py::arg("parent"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_submachine_state", static_cast<cy::SubmachineState*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_submachine_state),
+			 py::arg("parent"), py::arg("reference"), py::arg("name") = cy::Name(),
+			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_submachine_state", static_cast<cy::SubmachineState*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::ID&, const cy::Name&, const cy::Rect&, const cy::Color&)>(&cy::Document::new_submachine_state),
+			 py::arg("parent"), py::arg("id"), py::arg("reference"), py::arg("name"),
+			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_entry", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_entry),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_entry", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_entry),
+			 py::arg("parent"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_entry", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_entry),
+			 py::arg("parent"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_exit", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::ID&, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_exit),
+			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_exit", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Name&, const cy::Point&, const cy::Color&)>(&cy::Document::new_exit),
+			 py::arg("parent"), py::arg("name"), py::arg("point") = cy::Point(),
+			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
+		.def("new_exit", static_cast<cy::ConnectionPoint*
+			 (cy::Document::*)(cy::ElementCollection*, const cy::Point&, const cy::Color&)>(&cy::Document::new_exit),
 			 py::arg("parent"), py::arg("point") = cy::Point(),
 			 py::arg("color") = cy::Color(), py::return_value_policy::reference)
 		.def("new_state", static_cast<cy::State*
