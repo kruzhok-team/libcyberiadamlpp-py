@@ -870,7 +870,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("remove_element", &cy::State::remove_element)
 		.def("compare_actions", &cy::State::compare_actions);
 
-	py::class_<cy::SubmachineState, cy::ElementCollection, PySubmachineState>(m, "SubmachineState")
+	py::class_<cy::SubmachineState, cy::State, PySubmachineState>(m, "SubmachineState")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::ID&, const cy::Rect&, const cy::Color&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("reference"),
 			 py::arg("rect") = cy::Rect(), py::arg("color") = cy::Color())
