@@ -43,6 +43,8 @@ try:
     # the connection points bound to the referenced machine, on the state border
     d.new_entry(sub, "Start", CyberiadaML.Point(-40, 0))
     d.new_exit(sub, "Done", CyberiadaML.Point(40, 0))
+    # the nested points do not reclassify the state into a composite one
+    assert sub.get_type() == CyberiadaML.elementSubmachineState
 
     path = sys.argv[0] + ".graphml"
     print(d)
