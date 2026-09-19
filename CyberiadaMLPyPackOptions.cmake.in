@@ -20,5 +20,5 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "libxml2 (>= 2.9) | libxml2-16, python3 (>= 3.8
 # which is built for this release's Python 3, is identifiable across releases
 set(DISTRO_TAG "@DISTRO_TAG@")
 if(NOT DISTRO_TAG STREQUAL "")
-  set(CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}~${DISTRO_TAG}")
+  set(CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}+${DISTRO_TAG}")
 endif()
