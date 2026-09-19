@@ -13,3 +13,10 @@ set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_DEBIAN_PACKAGE_NAME "python3-libcyberiadamlpp")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "The Python 3 binding for the Cyberiada state machine graphs processing library")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libxml2 (>= 2.9), python3 (>= 3.8), libcyberiadamlpp (>= 1.0.6), libcyberiadaml (>= 1.0.6), libhtreegeom (>= 1.0.6)")
+
+# a per-release build tags the version (e.g. 1.0.6~ubuntu2404) so the binding .deb,
+# which is built for this release's Python 3, is identifiable across releases
+set(DISTRO_TAG "@DISTRO_TAG@")
+if(NOT DISTRO_TAG STREQUAL "")
+  set(CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}~${DISTRO_TAG}")
+endif()

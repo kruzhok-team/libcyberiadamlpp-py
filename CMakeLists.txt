@@ -141,6 +141,9 @@ foreach(script_path ${test_scripts})
     ENVIRONMENT "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}")
 endforeach()
 
+# optional per-release suffix (e.g. ubuntu2404) for the package version, so the
+# distro-dependent binding .deb is distinguishable across Ubuntu releases
+set(DISTRO_TAG "" CACHE STRING "distribution suffix appended to the package version")
 configure_file ("${PROJECT_SOURCE_DIR}/CyberiadaMLPyPackOptions.cmake.in"
                 "${PROJECT_BINARY_DIR}/CyberiadaMLPyPackOptions.cmake"
                 @ONLY)
