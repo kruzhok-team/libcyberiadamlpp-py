@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.16)
 
 project(cyberiadamlpp-python VERSION 1.0.6)
 
@@ -56,7 +56,7 @@ add_custom_command(TARGET CyberiadaML
           "$<TARGET_FILE:CyberiadaML>"
           "${PROJECT_BINARY_DIR}/tests/"
   )
-if(WIN32)
+if(WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
   add_custom_command(TARGET CyberiadaML
     POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
@@ -93,16 +93,10 @@ file(GLOB test_files
   "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.txt"
   )
 foreach(f ${test_files})
-  get_filename_component(fname "${f}" NAME)
-  file(COPY_FILE
-    "${f}"
-    "${PROJECT_BINARY_DIR}/tests/${fname}"
-    ONLY_IF_DIFFERENT)  
+  file(COPY "${f}" DESTINATION "${PROJECT_BINARY_DIR}/tests/")
 endforeach()
 
-file(COPY_FILE
-  ${PROJECT_SOURCE_DIR}/run-tests.sh
-  ${PROJECT_BINARY_DIR}/run-tests.sh ONLY_IF_DIFFERENT)
+file(COPY "${PROJECT_SOURCE_DIR}/run-tests.sh" DESTINATION "${PROJECT_BINARY_DIR}")
 
 
 enable_testing()
