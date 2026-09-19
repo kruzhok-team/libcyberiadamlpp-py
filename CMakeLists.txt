@@ -9,7 +9,13 @@ if(NOT cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
-find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
+# Development.Module (the leaner target for extension modules) needs CMake 3.18;
+# on older CMake (Ubuntu 20.04 ships 3.16) fall back to the full Development
+if(CMAKE_VERSION VERSION_LESS 3.18)
+  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+else()
+  find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
+endif()
 find_package(pybind11 CONFIG REQUIRED)
 
 if(NOT pybind11_FOUND)
