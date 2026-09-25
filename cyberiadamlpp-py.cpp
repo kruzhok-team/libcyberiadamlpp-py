@@ -825,7 +825,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 											}
 											return collection.find_elements_by_types(v);
 									   })
-		.def("get_bound_rect", &cy::ElementCollection::get_bound_rect)
+		.def("get_bound_rect",
+			 static_cast<cy::Rect (cy::ElementCollection::*)(const cy::Document&) const>(&cy::ElementCollection::get_bound_rect))
+		.def("get_bound_rect",
+			 static_cast<cy::Rect (cy::ElementCollection::*)(const cy::Document&, bool) const>(&cy::ElementCollection::get_bound_rect),
+			 py::arg("d"), py::arg("exclude_comments"))
 		.def("get_children",
 			 static_cast<cy::ConstElementList (cy::ElementCollection::*)() const>(&cy::ElementCollection::get_children))
 		.def("get_children",
