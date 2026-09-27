@@ -55,6 +55,12 @@ if(WIN32)
 endif()
 install(TARGETS CyberiadaML DESTINATION ${Python3_SITELIB})
 
+# user-facing docs shipped in the package
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md
+              ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+              ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+        DESTINATION share/doc/python3-libcyberiadamlpp)
+
 # the tests import the module from their own directory
 add_custom_command(TARGET CyberiadaML
   POST_BUILD
