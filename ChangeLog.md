@@ -3,8 +3,10 @@
 ## Version 1.0.7 (unreleased)
 
 Changed:
-- the full geometry reconstruction follows the libhtgeom 1.1 layered layout
-  (the recorded output of test 37).
+- the full geometry reconstruction follows the libhtgeom 1.1 layered layout.
+
+Fixed:
+- minor fixes.
 
 ## Version 1.0.6
 
