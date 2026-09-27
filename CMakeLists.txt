@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(cyberiadamlpp-python VERSION 1.0.6)
+project(cyberiadamlpp-python VERSION 1.0.7)
 
 find_package(cyberiadaml REQUIRED)
 find_package(cyberiadamlpp REQUIRED)

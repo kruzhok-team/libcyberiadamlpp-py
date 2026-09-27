@@ -1,6 +1,6 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.0.7 (unreleased)
+## Version 1.0.7
 
 Changed:
 - the full geometry reconstruction follows the libhtgeom 1.1 layered layout.
