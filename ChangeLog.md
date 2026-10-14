@@ -1,5 +1,11 @@
 # libcyberiadamlpp-py project changelog
 
+## Version 1.0.8 (unreleased)
+
+Added:
+- `Document.update_geometry`: the geometry update keeping the drawn elements
+  (libhtgeom 1.2).
+
 ## Version 1.0.7
 
 Changed:

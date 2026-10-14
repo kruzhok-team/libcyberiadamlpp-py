@@ -1357,6 +1357,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::return_value_policy::reference_internal)
 		.def("get_meta_element", &cy::Document::get_meta_element, py::return_value_policy::reference)
 		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
+		.def("update_geometry", &cy::Document::update_geometry)
 		.def("set_name", &cy::Document::set_name)
 		.def("update_metainfo_from_comment", &cy::Document::update_metainfo_from_comment)
         .def("reset", &cy::Document::reset, "Reset the document", py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone);
