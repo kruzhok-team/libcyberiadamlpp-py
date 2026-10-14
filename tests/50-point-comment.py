@@ -28,10 +28,18 @@ try:
     # the strict load rejects the comment with point geometry
     try:
         bad = CyberiadaML.LocalDocument()
-        bad.open(sys.argv[0] + "-input.graphml")
+        bad.open(sys.argv[0] + "-input.graphml", CyberiadaML.formatDetect,
+                 CyberiadaML.geometryFormatQt, False, False, False, False, False, True)
         exit(1)
     except CyberiadaML.CybMLException:
         pass
+
+    # the non-strict load reads the point as a loose rect (the Lapki dialect)
+    lapki = CyberiadaML.LocalDocument()
+    lapki.open(sys.argv[0] + "-input.graphml")
+    assert lapki.get_file_format() == CyberiadaML.formatCyberiada10
+    point = lapki.get_state_machines()[0].find_element_by_id("cX")
+    assert point and point.has_geometry() and point.get_geometry_rect().valid
 
     # the reconstruction mode repairs the malformed geometry
     d = CyberiadaML.LocalDocument()

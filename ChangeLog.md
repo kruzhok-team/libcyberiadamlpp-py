@@ -1,5 +1,10 @@
 # libcyberiadamlpp-py project changelog
 
+## Version 1.0.9 (unreleased)
+
+Changed:
+- the tests follow the Arena and Lapki documents detected as Cyberiada.
+
 ## Version 1.0.8
 
 Added:
