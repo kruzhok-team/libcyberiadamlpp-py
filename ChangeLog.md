@@ -4,7 +4,7 @@
 
 Added:
 - `Document.update_geometry`: the geometry update keeping the drawn elements
-  (libhtgeom 1.2).
+  (libhtgeom 1.2); the package requires the 1.0.8 C/C++ libraries and libhtreegeom 1.2.
 
 ## Version 1.0.7
 
