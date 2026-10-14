@@ -863,6 +863,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("parent"), py::arg("id"), py::arg("name"), py::arg("rect") = cy::Rect(),
 			 py::arg("region_rect") = cy::Rect(), py::arg("color") = cy::Color())
 		.def("add_action", &cy::State::add_action)
+		.def("set_actions", [](cy::State& s, const py::iterable& actions) {
+				/* the action vector is opaque: take any iterable of actions */
+				std::vector<cy::Action> list;
+				for (py::handle a : actions) {
+					list.push_back(a.cast<cy::Action>());
+				}
+				s.set_actions(list);
+			}, py::arg("actions"))
+		.def("clear_actions", &cy::State::clear_actions)
+		.def("remove_action", &cy::State::remove_action, py::arg("index"))
 		.def("add_element", &collection_add_element, py::arg("element"))
 		.def("copy", &cy::State::copy, py::return_value_policy::take_ownership)
 		.def("get_actions", static_cast<const std::vector<cy::Action>& (cy::State::*)() const>(&cy::State::get_actions))
