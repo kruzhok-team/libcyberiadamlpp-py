@@ -1,12 +1,14 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.0.8 (unreleased)
+## Version 1.0.8
 
 Added:
 - `Document.update_geometry`: the geometry update keeping the drawn elements
   (libhtgeom 1.2); the package requires the 1.0.8 C/C++ libraries and libhtreegeom 1.2.
 - `State.set_actions` (from any iterable of actions), `State.clear_actions` and
   `State.remove_action`.
+- the tests of the transition colour without geometry and of the wide labels
+  inside the reconstructed machine border.
 
 ## Version 1.0.7
 
