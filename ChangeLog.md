@@ -2,8 +2,13 @@
 
 ## Version 1.0.9 (unreleased)
 
+Added:
+- `formatLapki`: the Lapki IDE dialect of Cyberiada 1.0 written for lapki-client and
+  lapki-compiler.
+
 Changed:
-- the tests follow the Arena and Lapki documents detected as Cyberiada.
+- the tests follow the Arena and Lapki documents detected as Cyberiada, the
+  non-strict Lapki repairs and the document name cleared by the reset.
 
 ## Version 1.0.8
 

@@ -502,6 +502,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("formatLegacyYED", cy::DocumentFormat::formatLegacyYED) 
 		.value("formatLegacyYEDOstranna", cy::DocumentFormat::formatLegacyYEDOstranna) 
 		.value("formatLegacyYEDBerloga16", cy::DocumentFormat::formatLegacyYEDBerloga16) 
+		.value("formatLapki", cy::DocumentFormat::formatLapki)
 		.value("formatDetect", cy::DocumentFormat::formatDetect)
 		.export_values();
 
