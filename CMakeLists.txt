@@ -53,7 +53,16 @@ if(WIN32)
   # python imports the extension modules by the .pyd suffix only
   set_target_properties(CyberiadaML PROPERTIES SUFFIX ".pyd")
 endif()
-install(TARGETS CyberiadaML DESTINATION ${Python3_SITELIB})
+# the Debian layout (dist-packages): a package installs the module into
+# /usr/lib/python3/dist-packages, not the /usr/local site dir CMake reports
+# for python 3.10+
+if(Python3_SITELIB MATCHES "dist-packages")
+  set(_python_dest lib/python3/dist-packages)
+else()
+  set(_python_dest "${Python3_SITELIB}")
+endif()
+set(PYTHON_INSTALL_DIR "${_python_dest}" CACHE PATH "the install directory of the CyberiadaML module")
+install(TARGETS CyberiadaML DESTINATION ${PYTHON_INSTALL_DIR})
 
 # user-facing docs shipped in the package
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md
