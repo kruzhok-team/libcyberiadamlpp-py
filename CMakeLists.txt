@@ -70,6 +70,10 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md
               ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
         DESTINATION share/doc/python3-libcyberiadamlpp)
 
+# the machine-readable (DEP-5) copyright, where the Debian policy wants it
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debian-copyright
+        DESTINATION share/doc/python3-libcyberiadamlpp RENAME copyright)
+
 # the tests import the module from their own directory
 add_custom_command(TARGET CyberiadaML
   POST_BUILD
