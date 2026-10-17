@@ -1,6 +1,6 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.0.9 (unreleased)
+## Version 1.0.9
 
 Added:
 - `formatLapki`: the Lapki IDE dialect of Cyberiada 1.0 written for lapki-client and
