@@ -12,7 +12,7 @@ the GNU Free Documentation License (version 1.3).
 
 ## Requirements
 
-* libcyberiadamlpp (version 1.0+, and its dependencies)
+* libcyberiadamlpp (version 1.0.8+, with libcyberiadaml 1.0.8+ and libhtreegeom 1.2+)
 * cmake (version 3.21+)
 * pybind11
 * python3 (version 3.8+)
