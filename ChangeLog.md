@@ -1,24 +1,18 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.0.9
-
 Added:
 - `formatLapki`: the Lapki IDE dialect of Cyberiada 1.0 written for lapki-client and
   lapki-compiler.
-
-Changed:
-- the tests follow the Arena and Lapki documents detected as Cyberiada, the
-  non-strict Lapki repairs and the document name cleared by the reset.
-
-## Version 1.0.8
-
-Added:
 - `Document.update_geometry`: the geometry update keeping the drawn elements
   (libhtgeom 1.2); the package requires the 1.0.8 C/C++ libraries and libhtreegeom 1.2.
 - `State.set_actions` (from any iterable of actions), `State.clear_actions` and
   `State.remove_action`.
 - the tests of the transition colour without geometry and of the wide labels
   inside the reconstructed machine border.
+
+Changed:
+- the tests follow the Arena and Lapki documents detected as Cyberiada, the
+  non-strict Lapki repairs and the document name cleared by the reset.
 
 ## Version 1.0.7
 
