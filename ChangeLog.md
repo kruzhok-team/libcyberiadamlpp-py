@@ -19,6 +19,8 @@ Changed:
 Fixed:
 - the MSVC build: the module compiles with `/bigobj` (error C1128, too many sections) and
   the pybind11 version checks use `&&` (MSVC does not read `and` in `#if`, warning C4067).
+- the Windows tests: the DLLs of the libraries and of libxml2 are copied beside the module
+  they import (Python 3.8+ does not load the DLLs of a module from PATH).
 
 ## Version 1.0.7
 

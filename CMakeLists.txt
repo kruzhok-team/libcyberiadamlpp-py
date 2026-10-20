@@ -9,6 +9,39 @@ if(NOT cyberiadamlpp_FOUND)
   message(FATAL_ERROR "Cannot find libcyberiadamlpp C++ library")
 endif()
 
+if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+  # Python 3.8+ loads the DLLs of an extension module from its own folder, not
+  # from PATH, so the module the tests import gets them beside it: the library
+  # DLLs of the prefix (cyberiadaml and cyberiadamlpp in bin, htgeom.dll in lib,
+  # which $<TARGET_RUNTIME_DLLS> cannot report) and the runtime of libxml2 (the
+  # vcpkg bin, else the bin beside the libxml2 import library cyberiadaml links)
+  get_filename_component(CYB_PREFIX_LIB "${cyberiadaml_LIBRARY}" ABSOLUTE)
+  file(GLOB CYB_DEPENDENCY_DLLS "${CYB_PREFIX_LIB}/*.dll" "${CYB_PREFIX_LIB}/../bin/*.dll")
+  set(CYB_XML_BINS)
+  if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+    list(APPEND CYB_XML_BINS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
+  endif()
+  get_target_property(CYB_ML_LINKS cyberiadaml INTERFACE_LINK_LIBRARIES)
+  foreach(item IN LISTS CYB_ML_LINKS)
+    if(item MATCHES "libxml2[^/]*\\.lib$" AND NOT item MATCHES "/debug/" AND EXISTS "${item}")
+      get_filename_component(xml_lib_dir "${item}" DIRECTORY)
+      list(APPEND CYB_XML_BINS "${xml_lib_dir}/../bin")
+    endif()
+  endforeach()
+  foreach(name libxml2 zlib1 iconv-2 charset-1 liblzma)
+    foreach(dir IN LISTS CYB_XML_BINS)
+      if(EXISTS "${dir}/${name}.dll")
+        list(APPEND CYB_DEPENDENCY_DLLS "${dir}/${name}.dll")
+        break()
+      endif()
+    endforeach()
+  endforeach()
+  if(NOT CYB_DEPENDENCY_DLLS)
+    message(WARNING "No library DLLs found near ${CYB_PREFIX_LIB}; copy cyberiadaml.dll, "
+                    "cyberiadamlpp.dll, htgeom.dll and libxml2.dll next to the module manually")
+  endif()
+endif()
+
 # Development.Module (the leaner target for extension modules) needs CMake 3.18;
 # on older CMake (Ubuntu 20.04 ships 3.16) fall back to the full Development
 if(CMAKE_VERSION VERSION_LESS 3.18)
@@ -88,6 +121,18 @@ if(WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
     POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             "$<TARGET_RUNTIME_DLLS:CyberiadaML>"
+            "${PROJECT_BINARY_DIR}/tests/"
+    COMMAND_EXPAND_LISTS
+    )
+endif()
+if(CYB_DEPENDENCY_DLLS)
+  add_custom_command(TARGET CyberiadaML
+    POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            ${CYB_DEPENDENCY_DLLS}
+            "$<TARGET_FILE_DIR:CyberiadaML>"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            ${CYB_DEPENDENCY_DLLS}
             "${PROJECT_BINARY_DIR}/tests/"
     COMMAND_EXPAND_LISTS
     )
