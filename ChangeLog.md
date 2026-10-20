@@ -16,6 +16,10 @@ Changed:
 - the tests follow the Arena and Lapki documents detected as Cyberiada, the
   non-strict Lapki repairs and the document name cleared by the reset.
 
+Fixed:
+- the MSVC build: the module compiles with `/bigobj` (error C1128, too many sections) and
+  the pybind11 version checks use `&&` (MSVC does not read `and` in `#if`, warning C4067).
+
 ## Version 1.0.7
 
 Changed:

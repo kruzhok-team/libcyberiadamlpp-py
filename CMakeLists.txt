@@ -41,7 +41,9 @@ add_compile_definitions(
 add_compile_definitions($<$<CONFIG:Debug>:__DEBUG__>)
 
 if(MSVC)
-  add_compile_options(/W4)
+  # the pybind11 bindings exceed the default section limit of an object file
+  # (pybind11_add_module adds /bigobj, this module is a plain library)
+  add_compile_options(/W4 /bigobj)
 endif()
 
 set(CMAKE_CXX_STANDARD 14)
