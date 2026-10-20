@@ -13,8 +13,9 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   # Python 3.8+ loads the DLLs of an extension module from its own folder, not
   # from PATH, so the module the tests import gets them beside it: the library
   # DLLs of the prefix (cyberiadaml and cyberiadamlpp in bin, htgeom.dll in lib,
-  # which $<TARGET_RUNTIME_DLLS> cannot report) and the runtime of libxml2 (the
-  # vcpkg bin, else the bin beside the libxml2 import library cyberiadaml links)
+  # which $<TARGET_RUNTIME_DLLS> cannot report) and what libcyberiadaml needs
+  # there: libxml2 with zlib and iconv, the PCRE2 POSIX wrapper of its regular
+  # expressions (the vcpkg bin, else the bin beside the import libraries it links)
   get_filename_component(CYB_PREFIX_LIB "${cyberiadaml_LIBRARY}" ABSOLUTE)
   file(GLOB CYB_DEPENDENCY_DLLS "${CYB_PREFIX_LIB}/*.dll" "${CYB_PREFIX_LIB}/../bin/*.dll")
   set(CYB_XML_BINS)
@@ -23,12 +24,13 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   endif()
   get_target_property(CYB_ML_LINKS cyberiadaml INTERFACE_LINK_LIBRARIES)
   foreach(item IN LISTS CYB_ML_LINKS)
-    if(item MATCHES "libxml2[^/]*\\.lib$" AND NOT item MATCHES "/debug/" AND EXISTS "${item}")
-      get_filename_component(xml_lib_dir "${item}" DIRECTORY)
-      list(APPEND CYB_XML_BINS "${xml_lib_dir}/../bin")
+    if(item MATCHES "\\.lib$" AND NOT item MATCHES "/debug/" AND EXISTS "${item}")
+      get_filename_component(lib_dir "${item}" DIRECTORY)
+      list(APPEND CYB_XML_BINS "${lib_dir}/../bin")
     endif()
   endforeach()
-  foreach(name libxml2 zlib1 iconv-2 charset-1 liblzma)
+  list(REMOVE_DUPLICATES CYB_XML_BINS)
+  foreach(name libxml2 zlib1 iconv-2 charset-1 liblzma pcre2-posix pcre2-8)
     foreach(dir IN LISTS CYB_XML_BINS)
       if(EXISTS "${dir}/${name}.dll")
         list(APPEND CYB_DEPENDENCY_DLLS "${dir}/${name}.dll")
@@ -38,7 +40,8 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
   endforeach()
   if(NOT CYB_DEPENDENCY_DLLS)
     message(WARNING "No library DLLs found near ${CYB_PREFIX_LIB}; copy cyberiadaml.dll, "
-                    "cyberiadamlpp.dll, htgeom.dll and libxml2.dll next to the module manually")
+                    "cyberiadamlpp.dll, htgeom.dll, libxml2.dll and pcre2-posix.dll next to "
+                    "the module manually")
   endif()
 endif()
 
