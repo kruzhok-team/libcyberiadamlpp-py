@@ -12,6 +12,10 @@ if(NOT PYTHON)
   message(FATAL_ERROR "PYTHON is not set")
 endif()
 
+# the patterns are UTF-8: the output too, whatever the code page of the system
+# (a Windows Python writes a redirected stdout in the ANSI one, cp1251 and so on)
+set(ENV{PYTHONIOENCODING} "utf-8")
+
 set(test_command)
 if(MEMCHECK)
   separate_arguments(test_command UNIX_COMMAND "${MEMCHECK}")
