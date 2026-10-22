@@ -665,7 +665,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("rebind_subjects", &cy::Comment::rebind_subjects, py::arg("root"))
 		.def("round_geometry", &cy::Comment::round_geometry)
 		.def("set_body", &cy::Comment::set_body)
-		.def("update_geometry", &cy::Comment::update_geometry);
+		.def("update_geometry", &cy::Comment::update_geometry)
+		.def("update_subject", &cy::Comment::update_subject, py::arg("index"), py::arg("subject"),
+			 py::return_value_policy::copy)
+		.def("update_subject_geometry", &cy::Comment::update_subject_geometry, py::arg("index"),
+			 py::arg("source"), py::arg("target") = cy::Point(), py::arg("polyline") = cy::Polyline());
 
 	py::class_<cy::Vertex, cy::Element, PyVertex>(m, "Vertex")
 		.def("clean_geometry", &cy::Vertex::clean_geometry)
@@ -1115,6 +1119,10 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::class_<cy::Document, cy::ElementCollection, PyDocument>(m, "Document")
         .def(py::init<cy::DocumentGeometryFormat>(), py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone)
         .def(py::init<const cy::Document&>())
+		.def("update_comment_subject", &cy::Document::update_comment_subject,
+			 py::arg("comment"), py::arg("index"), py::arg("element"),
+			 py::arg("type") = cy::CommentSubjectType::commentSubjectElement, py::arg("fragment") = cy::String(),
+			 py::return_value_policy::copy)
 		.def("add_comment_to_element", static_cast<const cy::CommentSubject&
 			 (cy::Document::*)(cy::Comment*, cy::Element*, const cy::ID&,
 							   const cy::Point&, const cy::Point&, const cy::Polyline&)>(&cy::Document::add_comment_to_element),
