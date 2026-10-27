@@ -1375,6 +1375,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("meta", static_cast<cy::DocumentMetainformation& (cy::Document::*)()>(&cy::Document::meta),
 			 py::return_value_policy::reference_internal)
 		.def("get_meta_element", &cy::Document::get_meta_element, py::return_value_policy::reference)
+		.def("is_fa", &cy::Document::is_fa)
+		.def("has_input_alphabet", &cy::Document::has_input_alphabet)
+		.def("get_input_alphabet", &cy::Document::get_input_alphabet, py::return_value_policy::reference_internal)
+		.def("has_output_alphabet", &cy::Document::has_output_alphabet)
+		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
 		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
 		.def("update_geometry", &cy::Document::update_geometry)
 		.def("set_name", &cy::Document::set_name)
@@ -1444,6 +1449,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	py::register_exception<cy::CybMLException>(m, "CybMLException");
 	py::register_exception<cy::ActionException>(m, "ActionException");
 	py::register_exception<cy::MetainformationException>(m, "MetainfoException");
+	py::register_exception<cy::FAException>(m, "FAException");
 	py::register_exception<cy::ParametersException>(m, "ParametersException");
 	py::register_exception<cy::NotFoundException>(m, "NotFoundException");
 	py::register_exception<cy::AssertException>(m, "AssertException");

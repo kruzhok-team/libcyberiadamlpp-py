@@ -1,8 +1,12 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.0.9 (unreleased)
+## Version 1.1.0 (unreleased)
 
 Added:
+- the EXT-FA extension: `FAException` for a finite automaton document
+  (`type/ fa`) breaking the EXT-FA rules on any load or save; `Document.is_fa`,
+  `get_input_alphabet` / `get_output_alphabet` and their `has_` forms; the
+  package requires the 1.1 C/C++ libraries.
 - `Comment.update_subject_geometry`, `Comment.update_subject` and
   `Document.update_comment_subject`: a comment subject changed in place (libcyberiadamlpp
   1.0.9); the package requires the 1.0.9 C/C++ libraries and libhtreegeom 1.3.
