@@ -3,6 +3,9 @@
 ## Version 1.1.0 (unreleased)
 
 Added:
+- `Document.arrange_geometry`: the layout anew, seeded by the existing
+  geometry - its bands, order, directions and minimum sizes (libcyberiadamlpp
+  1.1);
 - the EXT-FA extension: `FAException` for a finite automaton document
   (`type/ fa`) breaking the EXT-FA rules on any load or save; `Document.is_fa`,
   `get_input_alphabet` / `get_output_alphabet` and their `has_` forms; the

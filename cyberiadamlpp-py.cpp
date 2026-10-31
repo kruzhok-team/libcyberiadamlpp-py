@@ -1382,6 +1382,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
 		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
 		.def("update_geometry", &cy::Document::update_geometry)
+		.def("arrange_geometry", &cy::Document::arrange_geometry)
 		.def("set_name", &cy::Document::set_name)
 		.def("update_metainfo_from_comment", &cy::Document::update_metainfo_from_comment)
         .def("reset", &cy::Document::reset, "Reset the document", py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone);
