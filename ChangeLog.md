@@ -6,6 +6,10 @@ Added:
 - `Document.arrange_geometry`: the layout anew, seeded by the existing
   geometry - its bands, order, directions and minimum sizes (libcyberiadamlpp
   1.1);
+- the routing of the layout: `LayoutRouting` (`layoutRoutingPolyline`, the
+  default, or `layoutRoutingOrthogonal`), the optional `routing` argument of
+  `Document.reconstruct_geometry`, `update_geometry` and `arrange_geometry`
+  (libcyberiadamlpp 1.1, test 73);
 - the EXT-FA extension: `FAException` for a finite automaton document
   (`type/ fa`) breaking the EXT-FA rules on any load or save; `Document.is_fa`,
   `get_input_alphabet` / `get_output_alphabet` and their `has_` forms; the

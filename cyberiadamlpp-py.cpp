@@ -513,6 +513,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.value("geometryFormatQt", cy::DocumentGeometryFormat::geometryFormatQt)
 		.export_values();
 
+	py::enum_<cy::LayoutRouting>(m, "LayoutRouting")
+		.value("layoutRoutingPolyline", cy::LayoutRouting::layoutRoutingPolyline)
+		.value("layoutRoutingOrthogonal", cy::LayoutRouting::layoutRoutingOrthogonal)
+		.export_values();
+
 	py::class_<cy::Point>(m, "Point")
 		.def(py::init<>())
 		.def(py::init<double, double>())
@@ -1380,9 +1385,12 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_input_alphabet", &cy::Document::get_input_alphabet, py::return_value_policy::reference_internal)
 		.def("has_output_alphabet", &cy::Document::has_output_alphabet)
 		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
-		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry)
-		.def("update_geometry", &cy::Document::update_geometry)
-		.def("arrange_geometry", &cy::Document::arrange_geometry)
+		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry,
+			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
+		.def("update_geometry", &cy::Document::update_geometry,
+			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
+		.def("arrange_geometry", &cy::Document::arrange_geometry,
+			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
 		.def("set_name", &cy::Document::set_name)
 		.def("update_metainfo_from_comment", &cy::Document::update_metainfo_from_comment)
         .def("reset", &cy::Document::reset, "Reset the document", py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone);
