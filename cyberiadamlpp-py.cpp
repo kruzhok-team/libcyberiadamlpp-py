@@ -1385,11 +1385,11 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_input_alphabet", &cy::Document::get_input_alphabet, py::return_value_policy::reference_internal)
 		.def("has_output_alphabet", &cy::Document::has_output_alphabet)
 		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
-		.def("reconstruct_geometry", &cy::Document::reconstruct_geometry,
+		.def("reconstruct_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::reconstruct_geometry),
 			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
-		.def("update_geometry", &cy::Document::update_geometry,
+		.def("update_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::update_geometry),
 			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
-		.def("arrange_geometry", &cy::Document::arrange_geometry,
+		.def("arrange_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::arrange_geometry),
 			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
 		.def("set_name", &cy::Document::set_name)
 		.def("update_metainfo_from_comment", &cy::Document::update_metainfo_from_comment)
