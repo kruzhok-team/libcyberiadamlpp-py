@@ -1118,6 +1118,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("remove_string", &cy::DocumentMetainformation::remove_string)
 		.def("get_geometry", &cy::DocumentMetainformation::get_geometry)
 		.def("set_geometry", &cy::DocumentMetainformation::set_geometry)
+		.def("regions_stored", &cy::DocumentMetainformation::regions_stored)
+		.def("set_regions_stored", &cy::DocumentMetainformation::set_regions_stored)
 		.def_readwrite("transition_order", &cy::DocumentMetainformation::transition_order)
 		.def_readwrite("event_propagation", &cy::DocumentMetainformation::event_propagation);
 

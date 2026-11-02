@@ -1,0 +1,4 @@
+read: 0
+set: 1
+read back: 1
+removed: 0

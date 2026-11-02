@@ -6,6 +6,8 @@ Added:
 - `Document.arrange_geometry`: the layout anew, seeded by the existing
   geometry - its bands, order, directions and minimum sizes (libcyberiadamlpp
   1.1);
+- `DocumentMetainformation.regions_stored` / `set_regions_stored`: the meta
+  parameter `regionGeometry/ stored` (libcyberiadamlpp 1.1, test 74);
 - the routing of the layout: `LayoutRouting` (`layoutRoutingPolyline`, the
   default, or `layoutRoutingOrthogonal`), the optional `routing` argument of
   `Document.reconstruct_geometry`, `update_geometry` and `arrange_geometry`
