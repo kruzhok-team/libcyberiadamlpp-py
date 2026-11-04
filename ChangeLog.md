@@ -1,26 +1,17 @@
 # libcyberiadamlpp-py project changelog
 
-## Version 1.1.0 (unreleased)
+## Version 1.1.0
 
 Added:
 - `Document.arrange_geometry`: the layout anew, seeded by the existing
-  geometry - its bands, order, directions and minimum sizes (libcyberiadamlpp
-  1.1);
-- `DocumentMetainformation.regions_stored` / `set_regions_stored`: the meta
-  parameter `regionGeometry/ stored` (libcyberiadamlpp 1.1, test 74);
+  geometry;
+- `DocumentMetainformation.regions_stored` / `set_regions_stored`;
 - the routing of the layout: `LayoutRouting` (`layoutRoutingPolyline`, the
-  default, or `layoutRoutingOrthogonal`), the optional `routing` argument of
-  `Document.reconstruct_geometry`, `update_geometry` and `arrange_geometry`
-  (libcyberiadamlpp 1.1, test 73);
+  default, or `layoutRoutingOrthogonal`);
 - the EXT-FA extension: `FAException` for a finite automaton document
-  (`type/ fa`) breaking the EXT-FA rules on a strict load (a lenient one takes
-  the automaton as a draft); `Document.check_fa` lists every violation
-  (`FAFinding`: `requirement`, `element`, `message`, `foreign`);
-  `Document.is_fa`, `get_input_alphabet` / `get_output_alphabet` and their
-  `has_` forms; the package requires the 1.1 C/C++ libraries.
+  (`type/ fa`) breaking the EXT-FA rules on a strict load;
 - `Comment.update_subject_geometry`, `Comment.update_subject` and
-  `Document.update_comment_subject`: a comment subject changed in place (libcyberiadamlpp
-  1.0.9); the package requires the 1.0.9 C/C++ libraries and libhtreegeom 1.3.
+  `Document.update_comment_subject`.
 
 ## Version 1.0.8
 
