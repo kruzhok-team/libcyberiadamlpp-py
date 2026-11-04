@@ -1123,6 +1123,12 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def_readwrite("transition_order", &cy::DocumentMetainformation::transition_order)
 		.def_readwrite("event_propagation", &cy::DocumentMetainformation::event_propagation);
 
+	py::class_<cy::FAFinding>(m, "FAFinding")
+		.def_readonly("requirement", &cy::FAFinding::requirement)
+		.def_readonly("element", &cy::FAFinding::element)
+		.def_readonly("message", &cy::FAFinding::message)
+		.def_readonly("foreign", &cy::FAFinding::foreign);
+
 	py::class_<cy::Document, cy::ElementCollection, PyDocument>(m, "Document")
         .def(py::init<cy::DocumentGeometryFormat>(), py::arg("format") = cy::DocumentGeometryFormat::geometryFormatNone)
         .def(py::init<const cy::Document&>())
@@ -1387,6 +1393,7 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("get_input_alphabet", &cy::Document::get_input_alphabet, py::return_value_policy::reference_internal)
 		.def("has_output_alphabet", &cy::Document::has_output_alphabet)
 		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
+		.def("check_fa", &cy::Document::check_fa)
 		.def("reconstruct_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::reconstruct_geometry),
 			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
 		.def("update_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::update_geometry),

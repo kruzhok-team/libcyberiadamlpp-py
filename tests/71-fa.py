@@ -43,20 +43,32 @@ try:
     assert valid.get_input_alphabet().get_body() == "0\n1"
     assert valid.has_output_alphabet()
     assert valid.get_output_alphabet().get_name() == "FA_OUTPUT_RE"
+    assert not valid.check_fa()
 
-    # a transition with a guard is refused in both modes with the FA exception
-    for strict in (False, True):
-        try:
-            open_document(prefix + "invalid.graphml", strict)
-            exit(1)
-        except CyberiadaML.FAException as e:
-            assert str(e).startswith('FA Exception')
+    # a transition with a guard is refused by the strict mode with the FA exception
+    try:
+        open_document(prefix + "invalid.graphml", True)
+        exit(1)
+    except CyberiadaML.FAException as e:
+        assert str(e).startswith('FA Exception')
+
+    # the lenient mode reads and writes it as a draft, the guard is a foreign construct
+    draft = open_document(prefix + "invalid.graphml", False)
+    assert draft.is_fa()
+    findings = draft.check_fa()
+    assert len(findings) == 1
+    assert findings[0].requirement == "CGML-FA-3.4-1"
+    assert findings[0].element == "q1-q1"
+    assert findings[0].foreign
+    assert findings[0].message
+    assert draft.encode()
 
     # the same document without type/ fa is an ordinary state machine
     plain = open_document(prefix + "plain.graphml", True)
     assert not plain.is_fa()
     assert not plain.has_input_alphabet()
     assert not plain.has_output_alphabet()
+    assert not plain.check_fa()
 except Exception:
     traceback.print_exc()
     exit(1)

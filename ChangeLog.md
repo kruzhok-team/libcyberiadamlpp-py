@@ -13,9 +13,11 @@ Added:
   `Document.reconstruct_geometry`, `update_geometry` and `arrange_geometry`
   (libcyberiadamlpp 1.1, test 73);
 - the EXT-FA extension: `FAException` for a finite automaton document
-  (`type/ fa`) breaking the EXT-FA rules on any load or save; `Document.is_fa`,
-  `get_input_alphabet` / `get_output_alphabet` and their `has_` forms; the
-  package requires the 1.1 C/C++ libraries.
+  (`type/ fa`) breaking the EXT-FA rules on a strict load (a lenient one takes
+  the automaton as a draft); `Document.check_fa` lists every violation
+  (`FAFinding`: `requirement`, `element`, `message`, `foreign`);
+  `Document.is_fa`, `get_input_alphabet` / `get_output_alphabet` and their
+  `has_` forms; the package requires the 1.1 C/C++ libraries.
 - `Comment.update_subject_geometry`, `Comment.update_subject` and
   `Document.update_comment_subject`: a comment subject changed in place (libcyberiadamlpp
   1.0.9); the package requires the 1.0.9 C/C++ libraries and libhtreegeom 1.3.
