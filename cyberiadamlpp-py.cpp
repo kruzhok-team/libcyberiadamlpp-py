@@ -963,6 +963,75 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	m.attr("smiEdgeDiffFlagID") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiEdgeDiffFlagID));
 	m.attr("smiEdgeDiffFlagAction") = py::int_(static_cast<unsigned int>(cy::SMIsomorphismFlags::smiEdgeDiffFlagAction));
 
+	m.attr("diffAdded") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffAdded));
+	m.attr("diffRemoved") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffRemoved));
+	m.attr("diffType") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffType));
+	m.attr("diffTitle") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffTitle));
+	m.attr("diffActions") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffActions));
+	m.attr("diffParent") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffParent));
+	m.attr("diffLink") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffLink));
+	m.attr("diffComment") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffComment));
+	m.attr("diffColor") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffColor));
+	m.attr("diffGeometry") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffGeometry));
+	m.attr("diffCollapsed") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffCollapsed));
+	m.attr("diffSource") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffSource));
+	m.attr("diffTarget") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffTarget));
+	m.attr("diffTrigger") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffTrigger));
+	m.attr("diffGuard") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffGuard));
+	m.attr("diffBehavior") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffBehavior));
+	m.attr("diffPropagation") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffPropagation));
+	m.attr("diffSubject") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffSubject));
+	m.attr("diffMeta") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffMeta));
+	m.attr("diffElements") = py::int_(static_cast<unsigned int>(cy::DiffFlag::diffElements));
+	m.attr("diffKindNode") = py::int_(static_cast<int>(cy::diffKindNode));
+	m.attr("diffKindTransition") = py::int_(static_cast<int>(cy::diffKindTransition));
+	m.attr("diffKindCommentLink") = py::int_(static_cast<int>(cy::diffKindCommentLink));
+
+	py::class_<cy::DiffOptions>(m, "DiffOptions")
+		.def(py::init([](bool geometry, bool comments, double tolerance) {
+						  cy::DiffOptions options;
+						  options.geometry = geometry;
+						  options.comments = comments;
+						  options.tolerance = tolerance;
+						  return options;
+					  }),
+			 py::arg("geometry") = false, py::arg("comments") = true,
+			 py::arg("tolerance") = CYBERIADA_DIFF_GEOMETRY_TOLERANCE)
+		.def_readwrite("geometry", &cy::DiffOptions::geometry)
+		.def_readwrite("comments", &cy::DiffOptions::comments)
+		.def_readwrite("tolerance", &cy::DiffOptions::tolerance);
+
+	py::class_<cy::ElementDiff>(m, "ElementDiff")
+		.def_property_readonly("kind", [](const cy::ElementDiff& e) { return static_cast<int>(e.kind); })
+		.def_readonly("first", &cy::ElementDiff::first)
+		.def_readonly("second", &cy::ElementDiff::second)
+		.def_readonly("first_comment", &cy::ElementDiff::first_comment)
+		.def_readonly("second_comment", &cy::ElementDiff::second_comment)
+		.def_readonly("flags", &cy::ElementDiff::flags)
+		.def_readonly("actions", &cy::ElementDiff::actions)
+		.def("added", &cy::ElementDiff::added)
+		.def("removed", &cy::ElementDiff::removed);
+
+	py::class_<cy::StateMachineDiff>(m, "StateMachineDiff")
+		.def_readonly("first", &cy::StateMachineDiff::first)
+		.def_readonly("second", &cy::StateMachineDiff::second)
+		.def_readonly("flags", &cy::StateMachineDiff::flags)
+		.def_readonly("elements", &cy::StateMachineDiff::elements)
+		.def("changed", &cy::StateMachineDiff::changed);
+
+	py::class_<cy::MetaDiff>(m, "MetaDiff")
+		.def_readonly("name", &cy::MetaDiff::name)
+		.def_readonly("first", &cy::MetaDiff::first)
+		.def_readonly("second", &cy::MetaDiff::second)
+		.def_readonly("in_first", &cy::MetaDiff::in_first)
+		.def_readonly("in_second", &cy::MetaDiff::in_second);
+
+	py::class_<cy::DocumentDiff>(m, "DocumentDiff")
+		.def_readonly("flags", &cy::DocumentDiff::flags)
+		.def_readonly("meta", &cy::DocumentDiff::meta)
+		.def_readonly("machines", &cy::DocumentDiff::machines)
+		.def("changed", &cy::DocumentDiff::changed);
+
 	py::class_<cy::StateMachine, cy::ElementCollection, PyStateMachine>(m, "StateMachine")
 		.def(py::init<cy::Element*, const cy::ID&, const cy::Name&, const cy::Rect&>(),
 			 py::arg("parent"), py::arg("id"), py::arg("name") = cy::Name(""), py::arg("rect") = cy::Rect())
@@ -1084,6 +1153,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 																		ids(_new_edges), ids(_missing_edges));
 												  },
 			 py::arg("sm"), py::arg("ignore_comments") = true, py::arg("require_initial") = false)
+		.def("diff", py::overload_cast<const cy::StateMachine&, const cy::DiffOptions&>(&cy::StateMachine::diff, py::const_),
+			 py::arg("sm"), py::arg("options") = cy::DiffOptions())
 		.def("copy", &cy::StateMachine::copy, py::return_value_policy::take_ownership)
 		.def("get_comments", static_cast<std::vector<const cy::Comment*> (cy::StateMachine::*)() const>(&cy::StateMachine::get_comments))
 		.def("get_comments", static_cast<std::vector<cy::Comment*> (cy::StateMachine::*)()>(&cy::StateMachine::get_comments))
@@ -1394,6 +1465,8 @@ PYBIND11_MODULE(CyberiadaML, m) {
 		.def("has_output_alphabet", &cy::Document::has_output_alphabet)
 		.def("get_output_alphabet", &cy::Document::get_output_alphabet, py::return_value_policy::reference_internal)
 		.def("check_fa", &cy::Document::check_fa)
+		.def("diff", py::overload_cast<const cy::Document&, const cy::DiffOptions&>(&cy::Document::diff, py::const_),
+			 py::arg("d"), py::arg("options") = cy::DiffOptions())
 		.def("reconstruct_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::reconstruct_geometry),
 			 py::arg("reconstruct_sm"), py::arg("routing") = cy::layoutRoutingPolyline)
 		.def("update_geometry", py::overload_cast<bool, cy::LayoutRouting>(&cy::Document::update_geometry),

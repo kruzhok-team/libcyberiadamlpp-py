@@ -1,5 +1,14 @@
 # libcyberiadamlpp-py project changelog
 
+## Version 1.2.0 (unreleased)
+
+Added:
+- the revision diff (libcyberiadamlpp 1.2): `Document.diff` and
+  `StateMachine.diff`, `DiffOptions(geometry=False, comments=True, tolerance=...)`,
+  the results `DocumentDiff`, `StateMachineDiff`, `ElementDiff`, `MetaDiff`, the
+  constants `diffAdded` ... `diffElements` and `diffKindNode`,
+  `diffKindTransition`, `diffKindCommentLink`.
+
 ## Version 1.1.0
 
 Added:
