@@ -1523,16 +1523,16 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	// the hierarchy of cyberiadamlpp.h; a base is registered before its subclasses,
 	// since the newest translator is tried first
 	auto& exception = py::register_exception<cy::Exception>(m, "Exception");
-	py::register_exception<cy::FileException>(m, "FileException", exception);
-	auto& format = py::register_exception<cy::FormatException>(m, "FormatException", exception);
-	py::register_exception<cy::XMLException>(m, "XMLException", format);
-	auto& cybml = py::register_exception<cy::CybMLException>(m, "CybMLException", format);
-	py::register_exception<cy::ActionException>(m, "ActionException", cybml);
-	py::register_exception<cy::MetainformationException>(m, "MetainfoException", format);
-	py::register_exception<cy::FAException>(m, "FAException", format);
-	auto& parameters = py::register_exception<cy::ParametersException>(m, "ParametersException", exception);
-	py::register_exception<cy::NotFoundException>(m, "NotFoundException", parameters);
-	py::register_exception<cy::AssertException>(m, "AssertException", exception);
-	py::register_exception<cy::NotImplementedException>(m, "NotImplementedException", exception);
+	py::register_exception<cy::FileException>(m, "FileException", exception.ptr());
+	auto& format = py::register_exception<cy::FormatException>(m, "FormatException", exception.ptr());
+	py::register_exception<cy::XMLException>(m, "XMLException", format.ptr());
+	auto& cybml = py::register_exception<cy::CybMLException>(m, "CybMLException", format.ptr());
+	py::register_exception<cy::ActionException>(m, "ActionException", cybml.ptr());
+	py::register_exception<cy::MetainformationException>(m, "MetainfoException", format.ptr());
+	py::register_exception<cy::FAException>(m, "FAException", format.ptr());
+	auto& parameters = py::register_exception<cy::ParametersException>(m, "ParametersException", exception.ptr());
+	py::register_exception<cy::NotFoundException>(m, "NotFoundException", parameters.ptr());
+	py::register_exception<cy::AssertException>(m, "AssertException", exception.ptr());
+	py::register_exception<cy::NotImplementedException>(m, "NotImplementedException", exception.ptr());
 
 }
