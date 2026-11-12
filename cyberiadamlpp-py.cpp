@@ -1501,19 +1501,6 @@ PYBIND11_MODULE(CyberiadaML, m) {
 			 py::arg("skip_geometry") = false, py::arg("check_initial") = false,
 			 py::arg("strict_actions") = false, py::arg("skip_empty_behavior") = false);
 
-/*	py::class_<cy::Exception>(m, "Exception")
-		.def("str", &cy::Exception::str)
-		.def("__repr__", &cy::Exception::str);
-	py::class_<cy::FormatException, cy::Exception>(m, "FormatException");
-	py::class_<cy::XMLException, cy::FormatException>(m, "XMLException");
-	py::class_<cy::CybMLException, cy::FormatException>(m, "CybMLException");
-	py::class_<cy::ActionException, cy::CybMLException>(m, "ActionException");
-	py::class_<cy::MetainformationException, cy::FormatException>(m, "MetainfoException");
-	py::class_<cy::ParametersException, cy::Exception>(m, "ParametersException");
-	py::class_<cy::NotFoundException, cy::ParametersException>(m, "NotFoundException");
-	py::class_<cy::AssertException, cy::Exception>(m, "AssertException");
-	py::class_<cy::NotImplementedException, cy::Exception>(m, "NotImplementedException");*/
-
 	py::bind_vector<std::vector<cy::CommentSubject>>(m, "ContentSubjectList");
 	py::bind_vector<std::vector<const cy::Element*>>(m, "ConstElementRefList");
 	py::bind_vector<std::vector<cy::Element*>>(m, "ElementRefList");
@@ -1533,17 +1520,19 @@ PYBIND11_MODULE(CyberiadaML, m) {
 	m.def("cleanup_library", &cy::cleanup_library);
 	m.def("is_legacy_yed_format", &cy::is_legacy_yed_format, py::arg("f"));
 
-	py::register_exception<cy::Exception>(m, "Exception");
-	py::register_exception<cy::FileException>(m, "FileException");
-	py::register_exception<cy::FormatException>(m, "FormatException");
-	py::register_exception<cy::XMLException>(m, "XMLException");
-	py::register_exception<cy::CybMLException>(m, "CybMLException");
-	py::register_exception<cy::ActionException>(m, "ActionException");
-	py::register_exception<cy::MetainformationException>(m, "MetainfoException");
-	py::register_exception<cy::FAException>(m, "FAException");
-	py::register_exception<cy::ParametersException>(m, "ParametersException");
-	py::register_exception<cy::NotFoundException>(m, "NotFoundException");
-	py::register_exception<cy::AssertException>(m, "AssertException");
-	py::register_exception<cy::NotImplementedException>(m, "NotImplementedException");
+	// the hierarchy of cyberiadamlpp.h; a base is registered before its subclasses,
+	// since the newest translator is tried first
+	auto& exception = py::register_exception<cy::Exception>(m, "Exception");
+	py::register_exception<cy::FileException>(m, "FileException", exception);
+	auto& format = py::register_exception<cy::FormatException>(m, "FormatException", exception);
+	py::register_exception<cy::XMLException>(m, "XMLException", format);
+	auto& cybml = py::register_exception<cy::CybMLException>(m, "CybMLException", format);
+	py::register_exception<cy::ActionException>(m, "ActionException", cybml);
+	py::register_exception<cy::MetainformationException>(m, "MetainfoException", format);
+	py::register_exception<cy::FAException>(m, "FAException", format);
+	auto& parameters = py::register_exception<cy::ParametersException>(m, "ParametersException", exception);
+	py::register_exception<cy::NotFoundException>(m, "NotFoundException", parameters);
+	py::register_exception<cy::AssertException>(m, "AssertException", exception);
+	py::register_exception<cy::NotImplementedException>(m, "NotImplementedException", exception);
 
 }

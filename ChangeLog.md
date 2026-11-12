@@ -9,6 +9,13 @@ Added:
   constants `diffAdded` ... `diffElements` and `diffKindNode`,
   `diffKindTransition`, `diffKindCommentLink`.
 
+Fixed:
+- the exceptions mirror the hierarchy of the C++ library: every one derives
+  from `CyberiadaML.Exception`, the format errors (`XMLException`,
+  `CybMLException`, `ActionException`, `MetainfoException`, `FAException`)
+  from `FormatException`, `NotFoundException` from `ParametersException`;
+  before, each derived from the builtin `Exception` alone (test 76).
+
 ## Version 1.1.0
 
 Added:
